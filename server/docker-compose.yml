@@ -1,0 +1,55 @@
+services:
+  # api:
+  #   build:
+  #       context: .
+  #       dockerfile: ./src/deployment/Dockerfile
+  #   volumes:
+  #       - ./:/app
+  #       - /app/node_modules
+  #       - /app/logs
+  #   ports:
+  #       - "9000:9000"
+  #   environment:
+  #       - NODE_ENV=development
+  #       - PORT=${PORT}
+  #       - DB_USER=${DB_USER}
+  #       - DB_HOST=${DB_HOST}
+  #       - DB_PASSWORD=${DB_PASSWORD}
+  #       - DB_PORT=${DB_PORT}
+  #   command: sh -c 'npm install && npm run watch'
+  #   networks:
+  #       - api-network
+
+  postgres:
+    image: postgres:latest
+    container_name: dev_db
+    restart: no
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: pass
+      TZ: "Asia/Kolkata"
+    ports:
+      - ${DB_PORT}:5432
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+    networks:
+      - api-network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - api-network
+
+volumes:
+  postgres_db:
+
+networks:
+  api-network:
+    driver: bridge
