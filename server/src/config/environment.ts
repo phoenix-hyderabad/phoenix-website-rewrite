@@ -36,4 +36,5 @@ export const CONFIG_PG = {
     password: process.env.DB_PASSWORD || "pass",
     port: normalizePort(process.env.DB_PORT),
     database: "phoenix",
+    ssl: false,
 };
