@@ -25,7 +25,7 @@ services:
     container_name: dev_db
     restart: no
     environment:
-      POSTGRES_USER: root
+      POSTGRES_USER: admin
       POSTGRES_PASSWORD: pass
       TZ: "Asia/Kolkata"
     ports:
