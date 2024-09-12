@@ -19,7 +19,7 @@ const ResourceCard = forwardRef(
         <DialogTrigger asChild>
           <div
             ref={ref}
-            className="before:border-glow relative flex h-full w-full max-w-80 flex-1 cursor-pointer flex-col gap-4 rounded-2xl bg-background p-8 before:absolute before:-bottom-[1px] before:-left-[1px] before:-right-[1px] before:-top-[1px] before:-z-10 before:rounded-2xl before:content-[''] max-lg:justify-between max-sm:flex-col"
+            className="before:border-glow relative flex h-full w-full max-w-80 flex-1 cursor-pointer flex-col gap-4 rounded-2xl bg-background py-4 px-16 before:absolute before:-bottom-[1px] before:-left-[1px] before:-right-[1px] before:-top-[1px] before:-z-10 before:rounded-2xl before:content-[''] max-lg:justify-between max-sm:flex-col"
             onClick={onClick}
           >
             <span className="text-lg">{heading}</span>
