@@ -122,7 +122,7 @@ function Home() {
             <h1 className="font-sans text-3xl uppercase tracking-widest">
               Perpetual Hankerers of Electronics
             </h1>
-            <h2 className="text-4xl font-bold">PhOeNiX</h2>
+            <h2 className="text-4xl font-bold">PHoEnix</h2>
             <p className="font-sans text-lg">
               Phoenix Technical Association is a dynamic and student-driven
               organization that stands as a testament to the vibrant spirit of
