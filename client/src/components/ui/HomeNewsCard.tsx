@@ -17,22 +17,16 @@ interface HomeNewsCardProps {
 }
 function HomeNewsCard({ item, index }: HomeNewsCardProps) {
   return (
-    <CarouselItem key={index} className="h-40 hover:brightness-150">
-      <Card className="rounded-lg bg-background p-4">
+    <CarouselItem key={index} className="basis-1/2">
+      <Card className="flex h-full max-h-full cursor-pointer flex-col rounded-lg bg-card hover:brightness-150">
         <CardHeader>
           <CardTitle>{item.title}</CardTitle>
           <CardDescription>{item.description}</CardDescription>
         </CardHeader>
-        <CardFooter className="gap-3">
+        <CardFooter className="flex-1 items-end justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">{item.date}</span>
+            <span className="text-muted-foreground">{item.date}</span>
           </div>
-          <Link
-            to="#"
-            className="inline-flex items-center gap-2 text-primary underline-offset-4 hover:underline"
-          >
-            Learn More
-          </Link>
         </CardFooter>
       </Card>
     </CarouselItem>

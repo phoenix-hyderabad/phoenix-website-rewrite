@@ -1,15 +1,21 @@
-import { useEffect, useRef} from "react";
+import { useEffect, useRef } from "react";
 import HomeNewsCard from "@/components/ui/HomeNewsCard";
-import ResourceCard from "@/components/resources_page/ResourceCard";
+import dummyImg from "@/assets/img1.png";
 
 import {
   Carousel,
   CarouselContent,
   CarouselNext,
-  CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Dialog } from "@radix-ui/react-dialog";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import QuickLinkCard from "@/components/home_page/QuickLinkCard";
 
 const news = [
   {
@@ -56,33 +62,38 @@ const projects = [
     title: "Scholarship Program",
     description:
       "Providing financial assistance to underprivileged students to help them access quality education.",
-    link:"",
+    link: "",
+    cover: dummyImg,
   },
   {
     title: "Community Outreach",
     description:
       "Organizing workshops, volunteering initiatives, and social impact programs to support local communities.",
-    link:"",
+    link: "",
+    cover: dummyImg,
   },
   {
     title: "Digital Literacy Initiative",
     description:
       "Bridging the digital divide by providing technology training and access to underserved communities.",
-    link:"",
+    link: "",
+    cover: dummyImg,
   },
   {
-    title:"Entrepreneurship Acceleration",
-    description:"Supporting aspiring entrepreneurs with mentorship, resources, and funding to help them launch successful ventures.",
-    link:"",
+    title: "Entrepreneurship Acceleration",
+    description:
+      "Supporting aspiring entrepreneurs with mentorship, resources, and funding to help them launch successful ventures.",
+    link: "",
+    cover: dummyImg,
   },
 ];
 
 function Home() {
   const linksContainer = useRef<HTMLDivElement>(null);
-  const linkRefs = links.map((_) => useRef<HTMLDivElement>(null));
+  const linkRefs = links.map((_) => useRef<HTMLAnchorElement>(null));
   useEffect(() => {
     const moveEvent = (ev: MouseEvent) => {
-      linkRefs.forEach((targetRef:any) => {
+      linkRefs.forEach((targetRef: any) => {
         const target = targetRef.current;
         if (!target) return;
         const rect = target.getBoundingClientRect(),
@@ -103,8 +114,8 @@ function Home() {
   }, [linksContainer]);
 
   return (
-    <div className="mx-auto flex max-w-full flex-col items-center gap-8 text-center">
-      <section id="about" className="relative w-full shadow-xl">
+    <div className="mx-auto flex max-w-6xl flex-col items-center gap-8 text-center">
+      <section id="about" className="relative w-full py-12 shadow-xl">
         {/*<img src={img1} alt="About" className="h-full w-full object-cover absolute mix-blend-overlay" />*/}
         <div className="container grid h-full gap-8 px-8 py-[100px] text-left md:grid-cols-2 md:py-24">
           <div className="space-y-4 pl-4">
@@ -129,88 +140,85 @@ function Home() {
         </div>
       </section>
 
-
-
       {/* News */}
-      <section id="news" className="py-12 md:py-24">
-        <div className="container grid h-96 gap-8 px-4 md:grid-cols-2 md:px-6">
-          <div className="space-y-4">
+      <section id="news" className="py-12">
+        <div className="container flex flex-col items-center gap-8 px-4 md:flex-row md:px-6">
+          <div className="flex flex-col justify-center gap-4 md:flex-1">
             <h2 className="text-3xl font-bold">News and Events</h2>
             <p className="text-muted-foreground">
               Stay up-to-date with the latest news, upcoming events, and
               important announcements from the Phoenix Association.
             </p>
           </div>
-          <div className="grid">
-            <Carousel
-              opts={{
-                align: "start",
-              }}
-              className="max-h-80"
-              orientation="vertical"
-            >
-              <CarouselPrevious />
-              <CarouselContent className="max-h-80">
-                {news.map((item, index) => (
-                  <HomeNewsCard key={index} item={item} index={index} />
-                ))}
-              </CarouselContent>
-              <CarouselNext />
-            </Carousel>
-          </div>
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            orientation="vertical"
+            className="md:flex-1"
+          >
+            <CarouselContent className="h-[24rem]">
+              {news.map((item, index) => (
+                <HomeNewsCard key={index} item={item} index={index} />
+              ))}
+            </CarouselContent>
+            <CarouselNext />
+          </Carousel>
         </div>
       </section>
-
 
       {/* Quick Links */}
-      <section id="links" className="pb-12 md:pb-24 w-full flex justify-center">
-        <div className="container grid h-96 gap-8 md:grid-cols-2 md:px-6">
-        <div className="space-y-4 flex flex-col justify-center">
+      <section id="links" className="flex w-full justify-center py-12">
+        <div className="container flex flex-col items-center gap-8 md:h-96 md:flex-row md:px-6">
+          <div className="flex flex-col justify-center gap-4 md:flex-1">
             <h2 className="text-3xl font-bold">Quick Links</h2>
             <p className="text-muted-foreground">
-            Access important information and resources with ease.
+              Access important information and resources with ease.
             </p>
           </div>
-          <div className="h-full flex items-center justify-center w-full">
-          <Dialog>
-          <div className="grid grid-cols-2 gap-8 h-fit" ref={linksContainer}>
+          <div
+            className="grid h-min grid-cols-2 gap-8 md:flex-1"
+            ref={linksContainer}
+          >
             {links.map((link, index) => (
-              <ResourceCard key={index} heading={link.title} subheading="" onClick={()=>{console.log(link.link)}} ref={linkRefs[index]} />
+              <QuickLinkCard key={index} ref={linkRefs[index]} to={link.link}>
+                {link.title}
+              </QuickLinkCard>
             ))}
-          </div>
-          </Dialog>
           </div>
         </div>
       </section>
 
-
-            {/* Projects */}
-      <section id="links" className="pb-12 md:pb-24 w-full flex justify-center">
-        <div className="container grid h-96 gap-8 md:grid-cols-2 md:px-6">
-        <div className="space-y-4 flex flex-col justify-center">
-            <h2 className="text-3xl font-bold">Featured Projects</h2>
-            <p className="text-muted-foreground">
-              Discover the impactful initiatives led by the Phoenix Association.
-            </p>
-          </div>
-          <div className="h-full flex items-center justify-center w-full">
-          <div className="grid grid-cols-2 grid-rows-2 gap-8">
+      {/* Projects */}
+      <section
+        id="projects"
+        className="flex w-full flex-col justify-center gap-8 py-12 lg:flex-row"
+      >
+        <div className="flex flex-col justify-center space-y-4">
+          <h2 className="text-3xl font-bold">Featured Projects</h2>
+          <p className="text-muted-foreground">
+            Discover the impactful initiatives led by the Phoenix Association.
+          </p>
+        </div>
+        <div className="flex h-full w-full items-center justify-center">
+          <div className="grid gap-8 sm:grid-cols-2">
             {projects.map((project, index) => {
               return (
-                <Card>
+                <Card
+                  key={index}
+                  className="flex cursor-pointer flex-col hover:brightness-150"
+                >
                   <CardHeader>
                     <CardTitle>{project.title}</CardTitle>
+                    <CardDescription>{project.description}</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <p>{project.description}</p>
+                    <img src={project.cover} decoding="async" loading="lazy" />
                   </CardContent>
-                  <CardFooter>
-                    <a href={project.link}>Learn More</a>
-                  </CardFooter>
                 </Card>
-              )
+              );
             })}
-          </div>
           </div>
         </div>
       </section>
