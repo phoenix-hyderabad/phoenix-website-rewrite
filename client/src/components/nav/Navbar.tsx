@@ -44,7 +44,7 @@ const Navbar = () => {
         PHoEnix
       </RouterLink>
 
-      <NavigationMenu>
+      <NavigationMenu className="max-sm:hidden">
         <NavigationMenuList>
           <NavigationMenuItem>
             <Link to="resources">Resources</Link>
