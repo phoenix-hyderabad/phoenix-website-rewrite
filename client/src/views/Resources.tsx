@@ -284,14 +284,14 @@ function Resources() {
             </DialogDescription>
           </DialogHeader>
           <ScrollArea className="flex max-h-full flex-col" type="always">
-            <ul className="h-full">
+            <ul className="h-full divide-y-2 divide-accent-foreground/50">
               {resources[selectedIndex].subjects.map((subject, index) => (
                 <li key={index} className="flex flex-col">
                   <a
                     href={subject.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="border-t p-[.4rem] hover:bg-accent/50 active:bg-accent"
+                    className="py-[.4rem] hover:bg-accent/50 focus:bg-accent/50 active:bg-accent"
                   >
                     {subject.name}
                   </a>

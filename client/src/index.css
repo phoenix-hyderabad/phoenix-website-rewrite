@@ -19,7 +19,7 @@
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
     --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    --accent-foreground: 357.69 83.87% 51.37%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 240 5.9% 90%;
@@ -46,7 +46,7 @@
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 240 5% 64.9%;
     --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
+    --accent-foreground: 357.69 83.87% 51.37%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 240 3.7% 15.9%;
@@ -67,6 +67,9 @@
   body {
     @apply flex min-h-screen min-w-80 flex-col bg-background text-foreground;
   }
+  #root {
+    @apply flex flex-1 flex-col before:fixed before:-bottom-1 before:-left-1 before:-right-1 before:-top-1 before:-z-10 before:bg-[radial-gradient(#EB1B23C1_1px,transparent_1px)] before:content-[''] before:[background-size:34px_34px] before:[mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_60%,transparent_100%)];
+  }
 }
 
 @layer utilities {
@@ -74,14 +77,14 @@
     background-image: radial-gradient(
       200px circle at var(--mouse-x) var(--mouse-y),
       hsl(var(--accent-foreground)),
-      transparent 90%
+      transparent 99%
     );
   }
 
   @media not all and (hover: hover) {
     .border-glow {
       background-image: none;
-      background-color: hsl(var(--muted-foreground));
+      background-color: hsl(var(--accent-foreground));
     }
   }
 }
