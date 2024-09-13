@@ -49,7 +49,7 @@
     --accent-foreground: 357.69 83.87% 51.37%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
+    --border: 357.69 83.87% 24%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
     --chart-1: 220 70% 50%;
@@ -84,7 +84,7 @@
   @media not all and (hover: hover) {
     .border-glow {
       background-image: none;
-      background-color: hsl(var(--accent-foreground));
+      background-color: hsl(var(--border));
     }
   }
 }

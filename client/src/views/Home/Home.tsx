@@ -1,6 +1,7 @@
-import { useEffect, useRef } from "react";
+import { MouseEventHandler, useEffect, useRef } from "react";
 import HomeNewsCard from "@/components/ui/HomeNewsCard";
 import dummyImg from "@/assets/img1.png";
+import phoenixLogo from "@/assets/phoenix-logo.svg";
 
 import {
   Carousel,
@@ -88,9 +89,28 @@ const projects = [
   },
 ];
 
+const THRESHOLD = 40;
+
+const handleImageHover: MouseEventHandler<HTMLDivElement> = (e) => {
+  const { clientX, clientY, currentTarget } = e;
+  const { clientWidth, clientHeight, offsetLeft, offsetTop } = currentTarget;
+
+  const horizontal = (clientX - offsetLeft) / clientWidth;
+  const vertical = (clientY - offsetTop) / clientHeight;
+  const rotateX = (THRESHOLD / 2 - horizontal * THRESHOLD).toFixed(2);
+  const rotateY = (vertical * THRESHOLD - THRESHOLD / 2).toFixed(2);
+
+  currentTarget.style.transform = `perspective(${clientWidth}px) rotateX(${rotateY}deg) rotateY(${rotateX}deg) scale3d(1, 1, 1)`;
+};
+
+const resetImageTransform: MouseEventHandler<HTMLDivElement> = (e) => {
+  e.currentTarget.style.transform = `perspective(${e.currentTarget.clientWidth}px) rotateX(0deg) rotateY(0deg)`;
+};
+
 function Home() {
   const linksContainer = useRef<HTMLDivElement>(null);
   const linkRefs = links.map((_) => useRef<HTMLAnchorElement>(null));
+
   useEffect(() => {
     const moveEvent = (ev: MouseEvent) => {
       linkRefs.forEach((targetRef: any) => {
@@ -114,11 +134,11 @@ function Home() {
   }, [linksContainer]);
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col items-center gap-8 text-center">
+    <div className="mx-auto flex max-w-6xl flex-col items-center gap-8 px-8 text-center">
       <section id="about" className="relative w-full py-12 shadow-xl">
         {/*<img src={img1} alt="About" className="h-full w-full object-cover absolute mix-blend-overlay" />*/}
-        <div className="container grid h-full gap-8 px-8 py-[100px] text-left md:grid-cols-2 md:py-24">
-          <div className="space-y-4 pl-4">
+        <div className="flex items-center gap-4 overflow-hidden text-left">
+          <div className="flex flex-1 flex-col gap-4 py-24 max-md:items-center max-md:text-center md:pl-4">
             <h1 className="font-sans text-3xl uppercase tracking-widest">
               Perpetual Hankerers of Electronics
             </h1>
@@ -129,20 +149,23 @@ function Home() {
               innovation and collaboration within our academic community.
             </p>
           </div>
-          {/* { <div className="flex items-center justify-center">
-              <img
-                src={img1}
-                alt="About"
-                className="rounded-xl object-fill h-full"
-                
-              />
-            </div> } */}
+          <div
+            className="flex h-full flex-1 select-none items-center justify-center py-24 max-md:hidden"
+            onMouseMove={handleImageHover}
+            onMouseLeave={resetImageTransform}
+          >
+            <img
+              src={phoenixLogo}
+              alt="About"
+              className="object-fit h-full max-w-64 opacity-50 transition-transform will-change-transform"
+            />
+          </div>
         </div>
       </section>
 
       {/* News */}
       <section id="news" className="py-12">
-        <div className="container flex flex-col items-center gap-8 px-4 md:flex-row md:px-6">
+        <div className="container flex flex-col items-center gap-8 md:flex-row">
           <div className="flex flex-col justify-center gap-4 md:flex-1">
             <h2 className="text-3xl font-bold">News and Events</h2>
             <p className="text-muted-foreground">
@@ -158,7 +181,7 @@ function Home() {
             orientation="vertical"
             className="md:flex-1"
           >
-            <CarouselContent className="h-[24rem]">
+            <CarouselContent className="h-[25rem]">
               {news.map((item, index) => (
                 <HomeNewsCard key={index} item={item} index={index} />
               ))}
@@ -170,7 +193,7 @@ function Home() {
 
       {/* Quick Links */}
       <section id="links" className="flex w-full justify-center py-12">
-        <div className="container flex flex-col items-center gap-8 md:h-96 md:flex-row md:px-6">
+        <div className="container flex flex-col items-center gap-8 md:h-96 md:flex-row">
           <div className="flex flex-col justify-center gap-4 md:flex-1">
             <h2 className="text-3xl font-bold">Quick Links</h2>
             <p className="text-muted-foreground">
