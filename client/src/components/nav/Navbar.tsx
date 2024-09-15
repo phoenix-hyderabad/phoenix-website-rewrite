@@ -11,7 +11,7 @@ import { Link as RouterLink } from "react-router-dom";
 import phoenixLogo from "@/assets/phoenix-logo.svg";
 import { cn } from "@/lib/utils";
 
-const Link = ({ to, ...props }: LinkProps) => {
+ export const Link = ({ to, ...props }: LinkProps) => {
   const { pathname } = useLocation();
   const isActive = pathname.endsWith(to.toString());
 
