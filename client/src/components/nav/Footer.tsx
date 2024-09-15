@@ -1,4 +1,4 @@
-import { Link } from "../nav/Navbar";
+import { NavLink as Link } from "@/components/nav/NavLink";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -8,9 +8,10 @@ import { Link as RouterLink } from "react-router-dom";
 import phoenixLogo from "@/assets/phoenix-logo.svg";
 import { InstagramLogoIcon, LinkedInLogoIcon } from "@radix-ui/react-icons";
 import { Facebook } from "lucide-react";
-function Footer() {
+
+const Footer = () => {
   return (
-    <footer className="bottom-0 z-50 flex h-16 w-full items-center justify-between border-t bg-background/75 px-4 backdrop-blur-lg transition-all">
+    <footer className="flex h-16 w-full items-center justify-between border-t px-4">
       <RouterLink to="/" className="flex items-center gap-2 text-xl">
         <img
           src={phoenixLogo}
@@ -22,7 +23,7 @@ function Footer() {
         PHoEnix
       </RouterLink>
 
-      <NavigationMenu className="max-sm:hidden">
+      <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
             <Link to="https://www.instagram.com/phoenixbphc?igsh=MWk3MWZuYXB6Nzh4dw==">
@@ -39,7 +40,7 @@ function Footer() {
               <Facebook className="h-5 w-5" />
             </Link>
           </NavigationMenuItem>
-          <NavigationMenuItem>
+          <NavigationMenuItem className="max-sm:hidden">
             <p className="mb-0">
               © {new Date().getFullYear()} PHoEnix. All rights reserved.
             </p>
@@ -48,6 +49,6 @@ function Footer() {
       </NavigationMenu>
     </footer>
   );
-}
+};
 
 export default Footer;

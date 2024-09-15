@@ -4,7 +4,7 @@ import Home from "@/views/Home/Home";
 import NotFoundPage from "@/views/NotFound";
 import Resources from "@/views/Resources";
 import Navbar from "@/components/nav/Navbar";
-import Footer from "@/components/footer/Footer";
+import Footer from "@/components/nav/Footer";
 import Projects from "@/views/Projects";
 
 const App = () => {
