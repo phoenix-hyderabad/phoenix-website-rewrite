@@ -133,7 +133,7 @@ function Home() {
   }, [linksContainer]);
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col items-center gap-8 px-8 text-center">
+    <div className="mx-auto flex max-w-6xl flex-1 flex-col items-center gap-8 px-8 text-center">
       <section id="about" className="relative w-full py-12 shadow-xl">
         {/*<img src={img1} alt="About" className="h-full w-full object-cover absolute mix-blend-overlay" />*/}
         <div className="flex items-center gap-4 overflow-hidden text-left">

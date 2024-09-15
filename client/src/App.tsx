@@ -3,8 +3,9 @@ import Home from "@/views/Home/Home";
 
 import NotFoundPage from "@/views/NotFound";
 import Resources from "@/views/Resources";
-import Navbar from "./components/nav/Navbar";
-import Footer from "./components/footer/Footer";
+import Navbar from "@/components/nav/Navbar";
+import Footer from "@/components/footer/Footer";
+import Projects from "@/views/Projects";
 
 const App = () => {
   return (
@@ -13,6 +14,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/resources" element={<Resources />} />
+        <Route path="/projects" element={<Projects />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <Footer />

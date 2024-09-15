@@ -264,7 +264,7 @@ function Resources() {
   }, [cardsContainer]);
 
   return (
-    <div className="mx-auto flex h-dvh max-w-5xl flex-col gap-8 p-8 text-center">
+    <div className="mx-auto flex max-w-5xl flex-1 flex-col gap-8 p-8 text-center">
       <div className="flex flex-col gap-4">
         <h3 className="text-2xl">Phoenix drive resources</h3>
         <p className="text-sm text-muted-foreground">
@@ -303,7 +303,7 @@ function Resources() {
         </DialogContent>
 
         <div
-          className="grid grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] items-center justify-center gap-4"
+          className="grid grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] gap-4"
           ref={cardsContainer}
         >
           {resources.map((el, index) => (
