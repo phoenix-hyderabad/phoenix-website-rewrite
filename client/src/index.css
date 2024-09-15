@@ -70,6 +70,15 @@
   #root {
     @apply flex flex-1 flex-col before:fixed before:-bottom-1 before:-left-1 before:-right-1 before:-top-1 before:-z-10 before:bg-[radial-gradient(#EB1B23C1_1px,transparent_1px)] before:content-[''] before:[background-size:34px_34px] before:[mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_60%,transparent_100%)];
   }
+  ::-webkit-scrollbar {
+    @apply h-2.5 w-2.5;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full border-[1px] border-solid border-transparent bg-border bg-clip-padding;
+  }
 }
 
 @layer utilities {
