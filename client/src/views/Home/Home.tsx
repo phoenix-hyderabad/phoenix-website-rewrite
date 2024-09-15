@@ -1,5 +1,5 @@
 import { MouseEventHandler, useEffect, useRef } from "react";
-import HomeNewsCard from "@/components/ui/HomeNewsCard";
+import HomeNewsCard from "@/components/home_page/HomeNewsCard";
 import dummyImg from "@/assets/img1.png";
 import phoenixLogo from "@/assets/phoenix-logo.svg";
 
@@ -8,7 +8,6 @@ import {
   CarouselContent,
   CarouselNext,
 } from "@/components/ui/carousel";
-import { Dialog } from "@radix-ui/react-dialog";
 import {
   Card,
   CardContent,

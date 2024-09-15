@@ -1,13 +1,8 @@
-import React from "react";
-
 import { Link } from "../nav/Navbar";
 import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { Link as RouterLink } from "react-router-dom";
 import phoenixLogo from "@/assets/phoenix-logo.svg";
@@ -31,17 +26,17 @@ function Footer() {
         <NavigationMenuList>
           <NavigationMenuItem>
             <Link to="https://www.instagram.com/phoenixbphc?igsh=MWk3MWZuYXB6Nzh4dw==">
-              <InstagramLogoIcon className="h-5 w-5"/>
+              <InstagramLogoIcon className="h-5 w-5" />
             </Link>
           </NavigationMenuItem>
           <NavigationMenuItem>
             <Link to="https://www.linkedin.com/company/phoenix-association-bphc/">
-              <LinkedInLogoIcon className="h-5 w-5"/>
+              <LinkedInLogoIcon className="h-5 w-5" />
             </Link>
           </NavigationMenuItem>
           <NavigationMenuItem>
             <Link to="https://www.facebook.com/groups/121969974532289/user/100063699953850/">
-              <Facebook className="h-5 w-5"/>
+              <Facebook className="h-5 w-5" />
             </Link>
           </NavigationMenuItem>
           <NavigationMenuItem>
