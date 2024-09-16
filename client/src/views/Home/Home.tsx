@@ -88,18 +88,17 @@ const projects = [
   },
 ];
 
-const THRESHOLD = 40;
+const THRESHOLD = 50;
 
 const handleImageHover: MouseEventHandler<HTMLDivElement> = (e) => {
-  const { clientX, clientY, currentTarget } = e;
-  const { clientWidth, clientHeight, offsetLeft, offsetTop } = currentTarget;
+  const { currentTarget, clientX, clientY } = e;
+  const { left, top, height, width } = currentTarget.getBoundingClientRect();
 
-  const horizontal = (clientX - offsetLeft) / clientWidth;
-  const vertical = (clientY - offsetTop) / clientHeight;
-  const rotateX = (THRESHOLD / 2 - horizontal * THRESHOLD).toFixed(2);
-  const rotateY = (vertical * THRESHOLD - THRESHOLD / 2).toFixed(2);
-
-  currentTarget.style.transform = `perspective(${clientWidth}px) rotateX(${rotateY}deg) rotateY(${rotateX}deg) scale3d(1, 1, 1)`;
+  const horizontal = clientX - left - width / 2;
+  const vertical = clientY - top - height / 2;
+  const rotateX = ((horizontal / width) * THRESHOLD).toFixed(2);
+  const rotateY = ((vertical / height) * THRESHOLD).toFixed(2);
+  currentTarget.style.transform = `perspective(${width}px) rotateX(${rotateY}deg) rotateY(${-rotateX}deg) scale3d(1, 1, 1)`;
 };
 
 const resetImageTransform: MouseEventHandler<HTMLDivElement> = (e) => {
@@ -112,7 +111,7 @@ function Home() {
 
   useEffect(() => {
     const moveEvent = (ev: MouseEvent) => {
-      linkRefs.forEach((targetRef: any) => {
+      linkRefs.forEach((targetRef) => {
         const target = targetRef.current;
         if (!target) return;
         const rect = target.getBoundingClientRect(),
@@ -149,14 +148,14 @@ function Home() {
             </p>
           </div>
           <div
-            className="flex h-full flex-1 select-none items-center justify-center py-24 max-md:hidden"
+            className="flex h-full flex-1 select-none items-center justify-center py-24 will-change-transform max-md:hidden"
             onMouseMove={handleImageHover}
             onMouseLeave={resetImageTransform}
           >
             <img
               src={phoenixLogo}
               alt="About"
-              className="object-fit h-full max-w-64 opacity-50 transition-transform will-change-transform"
+              className="object-fit h-full max-w-64 opacity-50"
             />
           </div>
         </div>
