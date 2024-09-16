@@ -6,6 +6,7 @@ import Resources from "@/views/Resources";
 import Navbar from "@/components/nav/Navbar";
 import Footer from "@/components/nav/Footer";
 import Projects from "@/views/Projects";
+import Inductions from "./views/Inductions";
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/resources" element={<Resources />} />
         <Route path="/projects" element={<Projects />} />
+        <Route path="/inductions" element={<Inductions />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <Footer />
