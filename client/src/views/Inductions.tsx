@@ -1,26 +1,27 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ResourceCard from "@/components/resources_page/ResourceCard";
 import { Dialog } from "@radix-ui/react-dialog";
 import { useNavigate } from "react-router-dom";
-// import {
-//     AlertDialog,
-//     AlertDialogAction,
-//     AlertDialogCancel,
-//     AlertDialogContent,
-//     AlertDialogDescription,
-//     AlertDialogFooter,
-//     AlertDialogHeader,
-//     AlertDialogTitle,
-//     AlertDialogTrigger,
-//   } from "@/components/ui/alert-dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 function Inductions() {
   const navigate = useNavigate();
+  const [showAlert, setShowAlert] = useState(false);
   const handleCardClick = (url: string, isOpen: boolean) => {
     if (isOpen) {
       navigate(url);
     } else {
-      alert("Inductions are currently closed for this team.");
+      setShowAlert(true);
     }
   };
 
@@ -28,28 +29,29 @@ function Inductions() {
     {
       name: "Tech\nTeam",
       url: "/projects",
-      isOpen:false,
+      isOpen: false,
       deadline: "No Deadline",
     },
     {
       name: "Editorial\nTeam",
       url: "https://docs.google.com/document/d/1xNqUsbL3kC0nUq3y9JaYj6gPwAdxg8kc",
-      isOpen:false,
+      isOpen: true,
       deadline: "No Deadline",
     },
     {
       name: "Design\nTeam",
       url: "/",
-      isOpen:false,
+      isOpen: false,
       deadline: "No deadline",
     },
     {
       name: "IT\nTeam",
       url: "/",
-      isOpen:false,
+      isOpen: false,
       deadline: "No deadline",
     },
   ];
+
   const teamsContainer = useRef<HTMLDivElement>(null);
   const teamsRefs = teams.map(() => useRef<HTMLDivElement>(null));
 
@@ -88,6 +90,27 @@ function Inductions() {
         </p>
       </div>
       <Dialog>
+        <AlertDialog open={showAlert}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Current Inductions Status</AlertDialogTitle>
+              <AlertDialogDescription>
+                Inductions for this team are currently closed. Please check back
+                later.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel
+                onClick={() => {
+                  setShowAlert(false);
+                }}
+              >
+                Cancel
+              </AlertDialogCancel>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+        ;
         <div
           className="grid grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] gap-4"
           ref={teamsContainer}
@@ -96,10 +119,10 @@ function Inductions() {
             <ResourceCard
               key={index}
               heading={el.name}
-              subheading={(el.isOpen)?("Inductions Open"):("Inductions Closed")}
+              subheading={el.isOpen ? "Inductions Open" : "Inductions Closed"}
               onClick={() => handleCardClick(el.url, el.isOpen)}
               ref={teamsRefs[index]}
-            />
+            ></ResourceCard>
           ))}
         </div>
       </Dialog>

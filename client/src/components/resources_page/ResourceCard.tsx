@@ -23,10 +23,14 @@ const ResourceCard = forwardRef(
             onClick={onClick}
           >
             <span className="text-lg">{heading}</span>
-            {subheading ?? (
-              <span className="text-sm text-muted-foreground">
+            {subheading != null ? (
+              <span
+                className={`text-sm ${subheading === "Inductions Open" ? "text-green-600" : subheading === "Inductions Closed" ? "text-red-600" : "text-muted-foreground"}`}
+              >
                 {subheading}
               </span>
+            ) : (
+              <div></div>
             )}
           </div>
         </DialogTrigger>
