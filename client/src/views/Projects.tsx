@@ -85,7 +85,7 @@ function Projects() {
             <DialogTitle>{selectedProject?.name}</DialogTitle>
           </DialogHeader>
           <ScrollArea className="flex max-h-full flex-col pt-2" type="always">
-            <div className="flex flex-col items-center gap-4">
+            <div className="flex flex-col items-center justify-center gap-4">
               <img
                 src={selectedProject?.cover}
                 decoding="async"
@@ -100,11 +100,11 @@ function Projects() {
           </ScrollArea>
         </DialogContent>
         <h4 className="text-left text-xl">Current projects</h4>
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(18rem,max-content))] justify-center gap-4">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(19rem,max-content))] justify-center gap-4">
           {currentProjects.map(projectToCard)}
         </div>
         <h4 className="text-left text-xl">Past projects</h4>
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(18rem,max-content))] justify-center gap-4">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(19rem,max-content))] justify-center gap-4">
           {pastProjects.map(projectToCard)}
         </div>
       </Dialog>
