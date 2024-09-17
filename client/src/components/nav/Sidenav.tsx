@@ -46,7 +46,11 @@ const Sidenav = () => {
         </Button>
       </SheetTrigger>
       <SheetContent className="flex flex-col gap-4">
-        <RouterLink to="/" className="flex items-center gap-2 text-xl">
+        <RouterLink
+          to="/"
+          className="flex items-center gap-2 text-xl"
+          onClick={() => setIsOpen(false)}
+        >
           <img
             src={phoenixLogo}
             loading="lazy"
@@ -62,17 +66,8 @@ const Sidenav = () => {
           <Link to="https://drive.google.com/file/d/1P5ADJ4ycYUwZPm9PwafI2eDr0bUo0Aia/view?usp=sharing">
             Thriveforce
           </Link>
-          <Accordion type="single" collapsible>
-            <AccordionItem value="aboutus" className="border-none">
-              <AccordionTrigger className="p-2 text-lg">
-                About us
-              </AccordionTrigger>
-              <AccordionContent className="flex flex-col gap-2 py-2 pl-4">
-                <Link to="professors">Professors</Link>
-                <Link to="pors">PORs</Link>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
+          <Link to="inductions">Inductions</Link>
+          <Link to="about-us">About us</Link>
         </nav>
       </SheetContent>
     </Sheet>

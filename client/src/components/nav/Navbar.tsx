@@ -41,21 +41,7 @@ const Navbar = () => {
             <Link to="inductions">Inductions</Link>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuTrigger className="px-2">
-              About us
-            </NavigationMenuTrigger>
-            <NavigationMenuContent className="bg-background">
-              <ul className="flex flex-col p-2">
-                <li>
-                  <Link to="professors">Professors</Link>
-                </li>
-                <li>
-                  <Link to="pors" className="w-full">
-                    PORs
-                  </Link>
-                </li>
-              </ul>
-            </NavigationMenuContent>
+            <Link to="about-us">About us</Link>
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>

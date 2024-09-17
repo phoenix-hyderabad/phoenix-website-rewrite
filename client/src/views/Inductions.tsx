@@ -30,7 +30,9 @@ function Inductions() {
   ];
 
   const teamsContainer = useRef<HTMLDivElement>(null);
-  const teamsRefs = teams.map(() => useRef<HTMLAnchorElement>(null));
+  const teamsRefs = teams.map(() =>
+    useRef<HTMLAnchorElement | HTMLDivElement>(null)
+  );
 
   useEffect(() => {
     const moveEvent = (ev: MouseEvent) => {
