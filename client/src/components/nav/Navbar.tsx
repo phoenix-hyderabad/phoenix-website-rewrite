@@ -38,9 +38,7 @@ const Navbar = () => {
             </Link>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Link to="inductions">
-              Inductions
-            </Link>
+            <Link to="inductions">Inductions</Link>
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuTrigger className="px-2">

@@ -1,30 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
-import ResourceCard from "@/components/resources_page/ResourceCard";
-import { Dialog } from "@radix-ui/react-dialog";
-import { useNavigate } from "react-router-dom";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { useEffect, useRef } from "react";
+import TeamLinkCard from "@/components/inductions_page/TeamLinkCard";
 
 function Inductions() {
-  const navigate = useNavigate();
-  const [showAlert, setShowAlert] = useState(false);
-  const handleCardClick = (url: string, isOpen: boolean) => {
-    if (isOpen) {
-      navigate(url);
-    } else {
-      setShowAlert(true);
-    }
-  };
-
   const teams = [
     {
       name: "Tech\nTeam",
@@ -53,7 +30,7 @@ function Inductions() {
   ];
 
   const teamsContainer = useRef<HTMLDivElement>(null);
-  const teamsRefs = teams.map(() => useRef<HTMLDivElement>(null));
+  const teamsRefs = teams.map(() => useRef<HTMLAnchorElement>(null));
 
   useEffect(() => {
     const moveEvent = (ev: MouseEvent) => {
@@ -85,47 +62,24 @@ function Inductions() {
           We have the following teams to ensure the smooth functioning of
           various activities within the association.
           <br />
-          <br />
           Click on the respective team to apply.
         </p>
       </div>
-      <Dialog>
-        <AlertDialog open={showAlert}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Current Inductions Status</AlertDialogTitle>
-              <AlertDialogDescription>
-                Inductions for this team are currently closed. Please check back
-                later.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel
-                onClick={() => {
-                  setShowAlert(false);
-                }}
-              >
-                Cancel
-              </AlertDialogCancel>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-        ;
-        <div
-          className="grid grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] gap-4"
-          ref={teamsContainer}
-        >
-          {teams.map((el, index) => (
-            <ResourceCard
-              key={index}
-              heading={el.name}
-              subheading={el.isOpen ? "Inductions Open" : "Inductions Closed"}
-              onClick={() => handleCardClick(el.url, el.isOpen)}
-              ref={teamsRefs[index]}
-            ></ResourceCard>
-          ))}
-        </div>
-      </Dialog>
+      <div
+        className="grid grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] gap-4"
+        ref={teamsContainer}
+      >
+        {teams.map((el, index) => (
+          <TeamLinkCard
+            key={index}
+            open={el.isOpen}
+            to={el.url}
+            ref={teamsRefs[index]}
+          >
+            {el.name}
+          </TeamLinkCard>
+        ))}
+      </div>
     </div>
   );
 }
