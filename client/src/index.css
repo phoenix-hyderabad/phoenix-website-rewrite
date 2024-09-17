@@ -99,3 +99,8 @@
     }
   }
 }
+
+@font-face {
+  font-family: "phoenix";
+  src: url("@/assets/fonts/PHoEnix-Regular.otf");
+}

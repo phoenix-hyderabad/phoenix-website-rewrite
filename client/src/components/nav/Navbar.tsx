@@ -1,9 +1,7 @@
 import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuList,
-  NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { Link as RouterLink } from "react-router-dom";
 import phoenixLogo from "@/assets/phoenix-logo.svg";
@@ -33,7 +31,10 @@ const Navbar = () => {
             <Link to="projects">Projects</Link>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Link to="https://drive.google.com/file/d/1P5ADJ4ycYUwZPm9PwafI2eDr0bUo0Aia/view?usp=sharing">
+            <Link
+              to="https://drive.google.com/file/d/1P5ADJ4ycYUwZPm9PwafI2eDr0bUo0Aia/view?usp=sharing"
+              target="_blank"
+            >
               Thriveforce
             </Link>
           </NavigationMenuItem>

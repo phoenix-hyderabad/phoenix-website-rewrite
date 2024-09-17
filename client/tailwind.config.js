@@ -14,6 +14,7 @@ export default {
       },
       fontFamily: {
         sans: ["Poppins", ...defaultTheme.fontFamily.sans],
+        phoenix: ["phoenix", "Poppins", ...defaultTheme.fontFamily.sans],
       },
       colors: {
         background: "hsl(var(--background))",
