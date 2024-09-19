@@ -33,6 +33,8 @@ const TeamMembersItem = ({
                 hasLink ? "cursor-pointer" : ""
               )}
               href={hasLink ? el.link : undefined}
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <div className="flex flex-col gap-1">
                 <span className="max-h-6 overflow-hidden overflow-ellipsis">

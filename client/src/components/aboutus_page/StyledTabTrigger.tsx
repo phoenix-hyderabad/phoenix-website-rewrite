@@ -11,7 +11,7 @@ const StyledTabTrigger = ({
     <TabsTrigger
       className={cn(
         className,
-        "text-lg transition-none data-[state=active]:border data-[state=active]:text-accent-foreground"
+        "bg-transparent transition-none data-[state=active]:border data-[state=active]:bg-transparent data-[state=active]:text-accent-foreground sm:text-lg"
       )}
       {...props}
     >

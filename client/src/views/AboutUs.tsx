@@ -8,7 +8,7 @@ const AboutUs = () => {
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-8 p-8 text-center">
       <Tabs defaultValue="about">
-        <TabsList className="gap-2 bg-background">
+        <TabsList className="gap-2 bg-transparent">
           <StyledTabTrigger value="about">About Us</StyledTabTrigger>
           <StyledTabTrigger value="profs">Professors</StyledTabTrigger>
           <StyledTabTrigger value="team">Team</StyledTabTrigger>
