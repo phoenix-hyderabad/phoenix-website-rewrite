@@ -41,11 +41,11 @@ const news = [
 const links = [
   {
     title: "Join Us",
-    link: "/join",
+    link: "/inductions",
   },
   {
-    title: "Programs",
-    link: "/programs",
+    title: "What we do",
+    link: "/about-us",
   },
   {
     title: "Events",
