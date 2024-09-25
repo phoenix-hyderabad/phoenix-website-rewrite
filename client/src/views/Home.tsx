@@ -135,18 +135,18 @@ function Home() {
     <div className="mx-auto flex max-w-6xl flex-1 flex-col items-center gap-8 px-8 text-center">
       <section id="about" className="relative w-full py-12 shadow-xl">
         {/*<img src={img1} alt="About" className="h-full w-full object-cover absolute mix-blend-overlay" />*/}
-        <div className="flex items-center gap-4 overflow-hidden text-left">
-          <div className="flex flex-1 flex-col gap-4 py-24 max-md:items-center max-md:text-center md:pl-4">
-            <h1 className="font-sans text-3xl uppercase tracking-widest">
-              Perpetual Hankerers of Electronics
-            </h1>
-            <h2 className="text-4xl font-bold">PHoEnix</h2>
-            <p className="font-sans text-lg">
-              Phoenix Technical Association is a dynamic and student-driven
-              organization that stands as a testament to the vibrant spirit of
-              innovation and collaboration within our academic community.
-            </p>
-          </div>
+          <div className="flex items-center gap-4 overflow-hidden text-left">
+            <div className="flex flex-1 flex-col gap-4 py-24 max-md:items-center max-md:text-center md:pl-4">
+              <h1 className="font-sans text-3xl uppercase tracking-widest">
+                Perpetual Hankerers of Electronics
+              </h1>
+              <h2 className="text-4xl font-bold">PHoEnix</h2>
+              <p className="font-sans text-lg">
+                Phoenix Technical Association is a dynamic and student-driven
+                organization that stands as a testament to the vibrant spirit of
+                innovation and collaboration within our academic community.
+              </p>
+            </div>
           <div
             className="flex h-full flex-1 select-none items-center justify-center py-24 will-change-transform max-md:hidden"
             onMouseMove={handleImageHover}

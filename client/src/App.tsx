@@ -8,6 +8,7 @@ import Projects from "@/views/Projects";
 import Inductions from "@/views/Inductions";
 import { Toaster } from "@/components/ui/sonner";
 import AboutUs from "@/views/AboutUs";
+import LiveWire from "./views/LiveWire";
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
         <Route path="/projects" element={<Projects />} />
         <Route path="/inductions" element={<Inductions />} />
         <Route path="/about-us" element={<AboutUs />} />
+        <Route path="/livewire" element={<LiveWire />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <Footer />

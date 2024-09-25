@@ -42,6 +42,9 @@ const Navbar = () => {
             <Link to="inductions">Inductions</Link>
           </NavigationMenuItem>
           <NavigationMenuItem>
+            <Link to="livewire">LiveWire</Link>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
             <Link to="about-us">About us</Link>
           </NavigationMenuItem>
         </NavigationMenuList>
