@@ -18,7 +18,7 @@ interface HomeNewsCardProps {
 function HomeNewsCard({ item, index }: HomeNewsCardProps) {
   return (
     <CarouselItem key={index} className="basis-1/2 select-none">
-      <Card className="flex h-full max-h-full cursor-pointer flex-col rounded-lg bg-card hover:brightness-150">
+      <Card className="flex h-full max-h-full cursor-pointer flex-col rounded-lg -carbgd hover:brightness-150">
         <CardHeader>
           <CardTitle>{item.title}</CardTitle>
           <CardDescription>{item.description}</CardDescription>

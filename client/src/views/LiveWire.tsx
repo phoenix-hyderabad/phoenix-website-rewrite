@@ -13,6 +13,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Button } from "@/components/ui/button";
 
 function LiveWire() {
   const livewireEditions = [
@@ -30,8 +31,7 @@ function LiveWire() {
       year: "2020-2021",
       coverImage: liveWire21,
       name: "LiveWire '21",
-      description:
-        "The 2020-21 edition featuring insightful articles and interviews.",
+      description: "The 2020-21 edition featuring insightful articles.",
       readNowLink:
         "https://drive.google.com/file/d/1GHBKw2BryHHFby0T66KEOx0DUXjV-AEy/view?usp=sharing",
     },
@@ -78,7 +78,10 @@ function LiveWire() {
           blogs, and other creative works with the world.
         </p>
       </div>
-      <section id="about" className="relative w-full pb-4 grid grid-cols-[repeat(auto-fit,minmax(16rem,1fr))]">
+      <section
+        id="about"
+        className="relative grid w-full grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] pb-4"
+      >
         <div className="flex items-center gap-4 overflow-hidden text-left">
           <div className="flex flex-1 flex-col gap-2 py-24 max-md:items-center max-md:text-center md:pl-4">
             <h2 className="text-4xl font-bold">{livewireEditions[0].name}</h2>
@@ -88,24 +91,26 @@ function LiveWire() {
             </p>
             <a
               href={livewireEditions[0].readNowLink}
-              className="hover:cursor-pointer hover:underline"
+              className="hover:cursor-pointer"
             >
-              Click here to view the latest edition →
+              <button className="flex w-1/4 items-center justify-center rounded-lg bg-border py-2 font-bold text-gray-400 brightness-125 hover:cursor-pointer hover:brightness-150">
+                Read More
+              </button>
             </a>
           </div>
-            
+
           <div className="flex h-full flex-1 select-none items-center justify-center py-24 will-change-transform max-md:hidden">
             <a href={livewireEditions[0].readNowLink}>
               <img
                 src={livewireEditions[0].coverImage}
                 alt="About"
-                className="object-fit hover:brigthness-150 h-full max-w-72 hover:cursor-pointer shadow-2xl shadow-indigo-500/50"
+                className="object-fit hover:brigthness-150 h-full max-w-72 shadow-2xl shadow-indigo-500/50 hover:cursor-pointer"
               />
             </a>
           </div>
         </div>
       </section>
-      <section className="flex gap-8 flex-col">
+      <section className="flex flex-col gap-8">
         <h3 className="text-2xl">Check out our past editions!</h3>
         <Carousel
           opts={{
@@ -119,14 +124,13 @@ function LiveWire() {
           <CarouselContent className="">
             {livewireEditions.slice(1).map((edition, index) => (
               <CarouselItem key={index} className="basis-1/2">
-                <div className="m-2 flex flex-col gap-2 p-2">
+                <div className="m-2 flex h-1/5 flex-col gap-2 p-2">
                   <h4 className="text-3xl font-bold">{edition.name}</h4>
                   <p className="text-lg">{edition.description}</p>
-                  <a
-                    href={edition.readNowLink}
-                    className="hover:cursor-pointer hover:underline"
-                  >
-                    Read now →
+                  <a  className="flex justify-center" href={edition.readNowLink}>
+                    <button className="flex w-1/4 items-center justify-center rounded-lg bg-border py-2 font-bold text-gray-400 brightness-125 hover:cursor-pointer hover:brightness-150">
+                      Read More
+                    </button>
                   </a>
                 </div>
                 <div className="flex h-full select-none items-center justify-center pb-12 pt-4 will-change-transform max-md:hidden">
@@ -134,7 +138,7 @@ function LiveWire() {
                     <img
                       src={edition.coverImage}
                       alt="About"
-                      className="object-fit hover:brigthness-150 h-full max-w-72 hover:cursor-pointer"
+                      className="object-fit hover:brigthness-150 h-full max-w-72 hover:cursor-pointer shadow-2xl shadow-indigo-500/50"
                     />
                   </a>
                 </div>
