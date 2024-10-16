@@ -8,6 +8,9 @@ import cors from "cors";
 import corsOptions from "@/config/cors";
 import type { ErrorRequestHandler } from "express";
 import routes from "@/routes";
+import { AppError, HttpCode } from "./config/errors";
+import { errorHandler } from "./lib/errorhandler";
+import logger from "./lib/logger";
 
 const app = express();
 
@@ -28,16 +31,25 @@ app.use(cors(corsOptions));
 
 app.use(routes);
 
-// catch 404 and forward to error handler
+// catch 404
 app.use((_req, _res, next) => {
-    const err = new Error("Service not available");
-    next(err);
+    next(
+        new AppError({
+            httpCode: HttpCode.NOT_FOUND,
+            description: "Requested endpoint does not exist",
+        })
+    );
 });
 
 // error handler
-const errorHandler: ErrorRequestHandler = (_err, _req, res, _next) => {
-    res.status(500).send(`Error`);
+const expressErrorHandler: ErrorRequestHandler = (err, req, res, _next) => {
+    errorHandler.handleError(err as Error | AppError, req, res);
 };
-app.use(errorHandler);
+app.use(expressErrorHandler);
+
+process.on("uncaughtException", (error) => {
+    logger.error(`Uncaught Exception`);
+    errorHandler.handleError(error);
+});
 
 export default app;
