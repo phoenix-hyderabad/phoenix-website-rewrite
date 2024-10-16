@@ -13,8 +13,9 @@ export const PORT = process.env.PORT;
 |----------------------------------------------------------------------------------------|
 */
 
-export const SESSION_SECRET = process.env.JWT_SECRET ?? "";
-// if (!SESSION_SECRET) process.exit(1)
+export const SESSION_SECRET = process.env.JWT_SECRET ?? "session_secret_key";
+export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+if (!GOOGLE_CLIENT_ID) throw new Error("GOOGLE_CLIENT_ID not found in env");
 
 /**
 |----------------------------------------------------------------------------------------|

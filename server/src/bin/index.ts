@@ -32,6 +32,17 @@ server.listen(port, () => {
 server.on("clientError", onClientError);
 server.on("listening", onListening);
 
+if (import.meta.hot) {
+    /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
+    import.meta.hot.on("vite:beforeFullReload", () => {
+        server.close();
+    });
+    import.meta.hot.dispose(() => {
+        server.close();
+    });
+    /* eslint-enable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
+}
+
 /**
  * Event listener for HTTP server "error" event.
  */

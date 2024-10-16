@@ -7,7 +7,7 @@ import helmet from "helmet";
 import cors from "cors";
 import corsOptions from "@/config/cors";
 import type { ErrorRequestHandler } from "express";
-import routes from "@/routes";
+import routes from "@/api";
 import { AppError, HttpCode } from "./config/errors";
 import { errorHandler } from "./lib/errorhandler";
 import logger from "./lib/logger";
@@ -21,15 +21,16 @@ const limiter = rateLimit({
     legacyHeaders: false,
 });
 
+app.use(helmet());
 app.use(limiter);
 app.set("view engine", "jade");
+app.disable("x-powered-by");
 app.use(cookieParser());
-app.use(helmet());
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cors(corsOptions));
 
-app.use(routes);
+app.use("/api/", routes);
 
 // catch 404
 app.use((_req, _res, next) => {

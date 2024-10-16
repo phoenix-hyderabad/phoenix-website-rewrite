@@ -50,8 +50,8 @@ services:
             PGADMIN_DEFAULT_EMAIL: admin@example.com
             PGADMIN_DEFAULT_PASSWORD: admin
             TZ: Asia/Kolkata
-            GUNICORN_ACCESS_LOGFILE: '/dev/null'
-            PGADMIN_CONFIG_UPGRADE_CHECK_ENABLED: 'False'
+            GUNICORN_ACCESS_LOGFILE: "/dev/null"
+            PGADMIN_CONFIG_UPGRADE_CHECK_ENABLED: "False"
         ports:
             - "5050:80"
         depends_on:
@@ -60,7 +60,7 @@ services:
             - api-network
         logging:
             driver: none
-    
+
     redis:
         image: redis:6.2.5
         container_name: phoenix-redis
