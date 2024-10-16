@@ -1,3 +1,2 @@
 cd server
-bun format
-bun lint
+bun run lint-staged
