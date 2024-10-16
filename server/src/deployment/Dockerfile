@@ -1,10 +1,9 @@
 FROM node:20-alpine
+FROM oven/bun
 
 WORKDIR /app
 
 COPY package*.json .
-
-RUN npm install bun -g
 
 RUN bun install
 

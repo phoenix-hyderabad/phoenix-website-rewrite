@@ -1,2 +1,2 @@
-Dockerfile
- node_modules
+src/deployment/Dockerfile
+node_modules

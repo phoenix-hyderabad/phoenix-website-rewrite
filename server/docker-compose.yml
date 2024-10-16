@@ -1,5 +1,5 @@
 services:
-    api:
+    phoenixapi:
         build:
             dockerfile: ./src/deployment/Dockerfile
             context: .
@@ -21,8 +21,8 @@ services:
             DB_PORT: 5434
             REDIS_URI: redis://redis:6379
             JWT_PRIVATE_KEY: "jwt_private_key"
-            CRYPTO_KEY: "crypto_key"
-            GITHUB_WEBHOOK_SECRET: "github_webhook_secret"
+            AUTH_REFRESH_TOKEN_SECRET: refresh_token_secret
+            AUTH_ACCESS_TOKEN_SECRET: access_token_secret
             DEVELOPER_USERS: "f20230740"
             TZ: Asia/Kolkata
         networks:
