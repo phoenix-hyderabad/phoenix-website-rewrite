@@ -4,7 +4,7 @@
     "version": "1.0.0",
     "description": "Phoenix assoc website backend",
     "lint-staged": {
-        "*.{ts}": [
+        "*.ts": [
             "eslint --quiet --fix"
         ],
         "*.{json,js,ts}": [

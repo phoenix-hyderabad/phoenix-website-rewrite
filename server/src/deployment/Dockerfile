@@ -1,15 +1,15 @@
-FROM node:19.9.0
+FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY package*.json .
 
-RUN npm install
+RUN npm install bun -g
 
-RUN npm install nodemon -g
+RUN bun install
 
 COPY . .
 
 EXPOSE 9000
 
-CMD ["nodemon", "/dist/index.js"]
+CMD ["bun", "watch"]
