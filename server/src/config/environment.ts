@@ -13,7 +13,7 @@ export const PORT = process.env.PORT;
 |----------------------------------------------------------------------------------------|
 */
 
-export const SESSION_SECRET = process.env.JWT_SECRET || "";
+export const SESSION_SECRET = process.env.JWT_SECRET ?? "";
 // if (!SESSION_SECRET) process.exit(1)
 
 /**
@@ -25,16 +25,16 @@ export const SESSION_SECRET = process.env.JWT_SECRET || "";
 const defaultPort = 5432;
 function normalizePort(val: string | undefined) {
     if (!val) return defaultPort;
-    let port = parseInt(val, 10);
+    const port = parseInt(val, 10);
     if (isNaN(port)) return defaultPort;
     if (port >= 0) return port;
     return defaultPort;
 }
 
 export const CONFIG_PG = {
-    host: process.env.DB_HOST || "localhost",
-    user: process.env.DB_USER || "admin",
-    password: process.env.DB_PASSWORD || "pass",
+    host: process.env.DB_HOST ?? "localhost",
+    user: process.env.DB_USER ?? "admin",
+    password: process.env.DB_PASSWORD ?? "pass",
     port: normalizePort(process.env.DB_PORT),
     database: "phoenix",
     ssl: false,

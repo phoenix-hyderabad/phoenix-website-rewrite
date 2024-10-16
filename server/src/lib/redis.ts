@@ -3,7 +3,7 @@ import logger from "./logger";
 
 // Create a Redis client
 const client = redis.createClient();
-(async () => {
+void (async () => {
     await client.connect();
 })();
 

@@ -6,11 +6,10 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import cors from "cors";
 import corsOptions from "@/config/cors";
-import logger from "@/lib/logger";
 import type { ErrorRequestHandler } from "express";
 import routes from "@/routes";
 
-let app = express();
+const app = express();
 
 const limiter = rateLimit({
     windowMs: 10 * 60 * 1000, // 10 minutes
@@ -31,19 +30,13 @@ app.use(routes);
 
 // catch 404 and forward to error handler
 app.use((_req, _res, next) => {
-    let err: any = new Error("Service not available");
-    err.status = 404;
+    const err = new Error("Service not available");
     next(err);
 });
 
 // error handler
-const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
-    logger.error({
-        status: err.status,
-        endpoint: req.originalUrl,
-        msg: err.message,
-    });
-    res.status(err.status || 500).send(`Error ${err.status || 500}`);
+const errorHandler: ErrorRequestHandler = (_err, _req, res, _next) => {
+    res.status(500).send(`Error`);
 };
 app.use(errorHandler);
 

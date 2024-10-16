@@ -11,8 +11,8 @@ const logLevels = {
 };
 
 const customFormatter = format.printf(({ level, message, timestamp }) => {
-    if (typeof message === "object") {
-        message = message.msg;
+    if (typeof message !== "string") {
+        message = JSON.stringify(message);
     }
     return `[${timestamp}] => ${level}: ${message}`;
 });

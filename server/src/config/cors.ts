@@ -14,7 +14,7 @@ const corsOptions: CorsOptions = {
         // allow requests with no origin
         // (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) === -1) {
+        if (!allowedOrigins.includes(origin)) {
             logger.info("CORS policy not allowed for origin: " + origin);
             const msg =
                 "The CORS policy for this site does not " +
