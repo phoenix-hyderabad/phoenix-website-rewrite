@@ -22,12 +22,13 @@ export const SESSION_SECRET = process.env.JWT_SECRET || "";
 |----------------------------------------------------------------------------------------|
 */
 
+const defaultPort = 5432;
 function normalizePort(val: string | undefined) {
-    if (!val) return 5432;
+    if (!val) return defaultPort;
     let port = parseInt(val, 10);
-    if (isNaN(port)) return 5432;
+    if (isNaN(port)) return defaultPort;
     if (port >= 0) return port;
-    return 5432;
+    return defaultPort;
 }
 
 export const CONFIG_PG = {

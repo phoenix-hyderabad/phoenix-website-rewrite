@@ -9,7 +9,9 @@
         "watch": "nodemon --exec \"npm run start\" --watch src --ext ts",
         "format": "prettier --write src",
         "db:push": "drizzle-kit push",
-        "db:studio": "drizzle-kit studio"
+        "db:studio": "drizzle-kit studio",
+        "db:generate": "drizzle-kit generate",
+        "db:migrate": "drizzle-kit migrate"
     },
     "dependencies": {
         "cookie-parser": "^1.4.6",
