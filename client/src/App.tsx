@@ -8,25 +8,38 @@ import Projects from "@/views/Projects";
 import Inductions from "@/views/Inductions";
 import { Toaster } from "@/components/ui/sonner";
 import AboutUs from "@/views/AboutUs";
-import LiveWire from "./views/LiveWire";
+import LiveWire from "@/views/LiveWire";
+import Login from "@/views/Login";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { AuthProvider } from "@/lib/Auth";
+
+const queryClient = new QueryClient();
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/resources" element={<Resources />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/inductions" element={<Inductions />} />
-        <Route path="/about-us" element={<AboutUs />} />
-        <Route path="/livewire" element={<LiveWire />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-      <Footer />
-      <Toaster />
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+        <AuthProvider>
+          <BrowserRouter>
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/resources" element={<Resources />} />
+              <Route path="/projects" element={<Projects />} />
+              <Route path="/inductions" element={<Inductions />} />
+              <Route path="/about-us" element={<AboutUs />} />
+              <Route path="/livewire" element={<LiveWire />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+            <Footer />
+            <Toaster />
+          </BrowserRouter>
+        </AuthProvider>
+      </GoogleOAuthProvider>
+    </QueryClientProvider>
   );
 };
 

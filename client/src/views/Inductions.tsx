@@ -7,25 +7,21 @@ function Inductions() {
       name: "Tech\nTeam",
       url: "/projects",
       isOpen: false,
-      deadline: "No Deadline",
     },
     {
       name: "Editorial\nTeam",
       url: "https://docs.google.com/document/d/1xNqUsbL3kC0nUq3y9JaYj6gPwAdxg8kc",
       isOpen: true,
-      deadline: "No Deadline",
     },
     {
       name: "Design\nTeam",
       url: "/",
       isOpen: false,
-      deadline: "No deadline",
     },
     {
       name: "IT\nTeam",
       url: "/",
       isOpen: false,
-      deadline: "No deadline",
     },
   ];
 
