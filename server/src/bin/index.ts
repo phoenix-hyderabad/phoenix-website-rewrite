@@ -23,22 +23,27 @@ const server = http.createServer(app);
  */
 
 server.listen(port, () => {
-    if (process.env.name === "master") {
-        // cronJobs();
-        logger.info("Server started on port " + port + " as master");
-    }
-    logger.info("Server started on port " + port + " as slave");
+    const addr = server.address();
+    logger.info(
+        "Server started on " +
+            (typeof addr === "string" ? "pipe " + addr : "port " + addr?.port)
+    );
 });
 server.on("clientError", onClientError);
-server.on("listening", onListening);
 
 if (import.meta.hot) {
     /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
-    import.meta.hot.on("vite:beforeFullReload", () => {
+    function closeServer() {
+        process.removeAllListeners();
         server.close();
+    }
+    import.meta.hot.on("vite:beforeFullReload", () => {
+        closeServer();
+        logger.info("HMR: FULL RELOAD");
     });
     import.meta.hot.dispose(() => {
-        server.close();
+        closeServer();
+        logger.info("HMR: DISPOSE");
     });
     /* eslint-enable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
 }
@@ -50,11 +55,4 @@ if (import.meta.hot) {
 function onClientError(err: Error, socket: Duplex) {
     logger.error("HTTP Error: " + err.message);
     socket.end("HTTP/1.1 400 Bad Request\r\n\r\n");
-}
-
-function onListening() {
-    const addr = server.address();
-    const bind =
-        typeof addr === "string" ? "pipe " + addr : "port " + addr?.port;
-    logger.debug("Listening on " + bind);
 }

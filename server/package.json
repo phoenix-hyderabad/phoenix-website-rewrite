@@ -14,7 +14,7 @@
     "scripts": {
         "start": "vite-node src/bin/index.ts",
         "eslint:fix": "eslint --quiet --fix",
-        "watch": "vite-node -w src/bin/index.ts",
+        "watch": "vite-node --watch.usePolling -w src/bin/index.ts",
         "format": "prettier --write --ignore-unknown .",
         "db:push": "drizzle-kit push",
         "db:studio": "drizzle-kit studio",
@@ -25,6 +25,7 @@
     },
     "dependencies": {
         "@types/jsonwebtoken": "^9.0.7",
+        "@types/request-ip": "^0.0.41",
         "cookie-parser": "^1.4.6",
         "cors": "^2.8.5",
         "dotenv": "^16.3.1",
@@ -38,9 +39,11 @@
         "module-alias": "^2.2.3",
         "pg": "^8.12.0",
         "redis": "^4.7.0",
+        "request-ip": "^3.3.0",
         "vite-node": "^2.0.5",
         "winston": "^3.14.2",
-        "zod": "^3.23.8"
+        "zod": "^3.23.8",
+        "zod-validation-error": "^3.4.0"
     },
     "devDependencies": {
         "@types/cookie-parser": "^1.4.7",

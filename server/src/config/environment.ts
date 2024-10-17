@@ -32,6 +32,8 @@ function normalizePort(val: string | undefined) {
     return defaultPort;
 }
 
+export const REDIS_URL = process.env.REDIS_URL ?? "redis://localhost:6379";
+
 export const CONFIG_PG = {
     host: process.env.DB_HOST ?? "localhost",
     user: process.env.DB_USER ?? "admin",

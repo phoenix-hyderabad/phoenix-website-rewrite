@@ -6,7 +6,7 @@ services:
         container_name: phoenix-api
         volumes:
             - .:/app
-        restart: no
+        restart: unless-stopped
         ports:
             - 9000:9000
         depends_on:
@@ -19,14 +19,15 @@ services:
             DB_HOST: localhost
             DB_PASSWORD: postgres
             DB_PORT: 5434
-            REDIS_URI: redis://redis:6379
-            JWT_PRIVATE_KEY: "jwt_private_key"
+            REDIS_URL: redis://redis:6379
+            JWT_PRIVATE_KEY: jwt_private_key
             AUTH_REFRESH_TOKEN_SECRET: refresh_token_secret
             AUTH_ACCESS_TOKEN_SECRET: access_token_secret
-            DEVELOPER_USERS: "f20230740"
+            DEVELOPER_USERS: f20230740
             TZ: Asia/Kolkata
-        networks:
-            - api-network
+            DOCKER_ENVIRONMENT: true
+            HOST: "0.0.0.0"
+        network_mode: "host"
 
     postgres:
         image: postgres:latest
@@ -67,6 +68,8 @@ services:
         restart: no
         ports:
             - 6379:6379
+        networks:
+            - api-network
 
 volumes:
     postgres_db:

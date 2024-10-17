@@ -11,18 +11,24 @@ import routes from "@/api";
 import { AppError, HttpCode } from "./config/errors";
 import { errorHandler } from "./lib/errorhandler";
 import logger from "./lib/logger";
+import requestIp from "request-ip";
 
 const app = express();
-
-const limiter = rateLimit({
-    windowMs: 10 * 60 * 1000, // 10 minutes
-    limit: 100, // requests per ip per window
-    standardHeaders: "draft-7",
-    legacyHeaders: false,
-});
+if (process.env.DOCKER_ENVIRONMENT === "true") {
+    logger.info("RUNNING IN DOCKER");
+    app.set("trust proxy", 1);
+}
 
 app.use(helmet());
-app.use(limiter);
+app.use(
+    rateLimit({
+        windowMs: 10 * 60 * 1000,
+        limit: 100,
+        standardHeaders: "draft-7",
+        legacyHeaders: false,
+        keyGenerator: (req) => requestIp.getClientIp(req) ?? "127.0.0.1",
+    })
+);
 app.set("view engine", "jade");
 app.disable("x-powered-by");
 app.use(cookieParser());
