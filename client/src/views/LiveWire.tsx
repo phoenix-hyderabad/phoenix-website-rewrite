@@ -55,7 +55,7 @@ function LiveWire() {
       year: "2014",
       coverImage: liveWire14,
       name: "LiveWire '14",
-      description: "2015 edition with stories of the year.",
+      description: "2014 edition with stories of the year.",
       readNowLink:
         "https://drive.google.com/file/d/0B7b_-u_ESd9weVo3Uk1ycDFzRkE/view?usp=sharing&resourcekey=0-m5YGZhALe0mPw0u0hG78rg",
     },
@@ -82,7 +82,7 @@ function LiveWire() {
         id="about"
         className="relative grid w-full grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] pb-4"
       >
-        <div className="flex items-center gap-4 overflow-hidden text-left">
+        <div className="flex items-center gap-4 overflow-hidden text-left max-md:flex-col">
           <div className="flex flex-1 flex-col gap-2 py-24 max-md:items-center max-md:text-center md:pl-4">
             <h2 className="text-4xl font-bold">{livewireEditions[0].name}</h2>
             <p className="text-lg">
@@ -93,13 +93,13 @@ function LiveWire() {
               href={livewireEditions[0].readNowLink}
               className="hover:cursor-pointer"
             >
-              <button className="flex w-1/4 items-center justify-center rounded-lg bg-border py-2 font-bold text-gray-400 brightness-125 hover:cursor-pointer hover:brightness-150">
+              <button className="flex items-center justify-center rounded-lg bg-border px-2 py-2 font-bold text-gray-400 brightness-125 hover:cursor-pointer hover:brightness-150">
                 Read More
               </button>
             </a>
           </div>
 
-          <div className="flex h-full flex-1 select-none items-center justify-center py-24 will-change-transform max-md:hidden">
+          <div className="flex h-full flex-1 select-none items-center justify-center py-24 max-md:py-12 will-change-transform">
             <a href={livewireEditions[0].readNowLink}>
               <img
                 src={livewireEditions[0].coverImage}
@@ -112,33 +112,33 @@ function LiveWire() {
       </section>
       <section className="flex flex-col gap-8">
         <h3 className="text-2xl">Check out our past editions!</h3>
-        <Carousel
+        
+        <Carousel className=""
           opts={{
             align: "start",
             loop: true,
           }}
           orientation="horizontal"
-          className="md:flex-1"
         >
           <CarouselPrevious />
-          <CarouselContent className="">
+          <CarouselContent className="max-md:w-[70dvw] max-lg:w-[70dvw]">
             {livewireEditions.slice(1).map((edition, index) => (
-              <CarouselItem key={index} className="basis-1/2">
+              <CarouselItem key={index} className="max-md:basis-full max-lg:basis-1/2 basis-1/2 mr-2">
                 <div className="m-2 flex h-1/5 flex-col gap-2 p-2">
                   <h4 className="text-3xl font-bold">{edition.name}</h4>
                   <p className="text-lg">{edition.description}</p>
                   <a  className="flex justify-center" href={edition.readNowLink}>
-                    <button className="flex w-1/4 items-center justify-center rounded-lg bg-border py-2 font-bold text-gray-400 brightness-125 hover:cursor-pointer hover:brightness-150">
+                    <button className="flex px-2 items-center justify-center rounded-lg bg-border py-2 font-bold text-gray-400 brightness-125 hover:cursor-pointer hover:brightness-150">
                       Read More
                     </button>
                   </a>
                 </div>
-                <div className="flex h-full select-none items-center justify-center pb-12 pt-4 will-change-transform max-md:hidden">
+                <div className="flex h-full select-none items-center justify-center pb-12 pt-4 will-change-transform">
                   <a href={edition.readNowLink}>
                     <img
                       src={edition.coverImage}
                       alt="About"
-                      className="object-fit hover:brigthness-150 h-full max-w-72 hover:cursor-pointer shadow-2xl shadow-indigo-500/50"
+                      className="object-fit hover:brigthness-150 h-full max-w-72 hover:cursor-pointer shadow-2xl"
                     />
                   </a>
                 </div>
@@ -147,6 +147,7 @@ function LiveWire() {
           </CarouselContent>
           <CarouselNext />
         </Carousel>
+       
       </section>
     </div>
   );
