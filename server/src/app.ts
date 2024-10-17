@@ -8,9 +8,9 @@ import cors from "cors";
 import corsOptions from "@/config/cors";
 import type { ErrorRequestHandler } from "express";
 import routes from "@/api";
-import { AppError, HttpCode } from "./config/errors";
-import { errorHandler } from "./lib/errorhandler";
-import logger from "./lib/logger";
+import { AppError, HttpCode } from "@/config/errors";
+import { errorHandler } from "@/lib/middleware/errorhandler";
+import logger from "@/lib/logger";
 import requestIp from "request-ip";
 
 const app = express();

@@ -6,6 +6,9 @@ import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
 import { fromError } from "zod-validation-error";
+import db from "@/lib/db";
+import { users } from "@/lib/db/schema/users";
+import { eq } from "drizzle-orm";
 
 const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 const router = express.Router();
@@ -36,6 +39,22 @@ router.post(
             const payload = ticket.getPayload();
             if (!payload) throw new Error("");
             const userId = payload.sub;
+            const result = await db
+                .select()
+                .from(users)
+                .where(
+                    eq(
+                        users.email,
+                        payload.email ?? "https://youtu.be/xvFZjo5PgG0"
+                    )
+                );
+            if (!result.length)
+                return next(
+                    new AppError({
+                        httpCode: HttpCode.UNAUTHORIZED,
+                        description: "This login isn't for you :)",
+                    })
+                );
             const accessToken = jwt.sign(
                 {
                     userId: userId,
@@ -52,12 +71,40 @@ router.post(
             next(
                 new AppError({
                     httpCode: HttpCode.UNAUTHORIZED,
-                    description: "invalid token",
+                    description: "Login error: invalid token",
                     feedback: JSON.stringify((e as Error).message),
                 })
             );
         }
     })
 );
+
+// Auth verify middleware
+
+router.use((req, _res, next) => {
+    const token = req.headers.authorization;
+    if (!token) {
+        return next(
+            new AppError({
+                description: "Unauthenticated",
+                httpCode: HttpCode.UNAUTHORIZED,
+            })
+        );
+    }
+    jwt.verify(token, SESSION_SECRET, (err, decoded) => {
+        if (err || !decoded || typeof decoded === "string")
+            return next(
+                new AppError({
+                    description: "Unauthorized",
+                    httpCode: HttpCode.UNAUTHORIZED,
+                })
+            );
+        req.user = {
+            userId: decoded.userId as string,
+            email: decoded.email as string | undefined,
+        };
+        next();
+    });
+});
 
 export default router;

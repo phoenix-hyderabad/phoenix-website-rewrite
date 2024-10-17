@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { AppError, HttpCode } from "@/config/errors";
-import logger from "./logger";
+import logger from "@/lib/logger";
 
 class ErrorHandler {
     private isTrustedError(error: Error): boolean {
