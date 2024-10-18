@@ -1,9 +1,5 @@
-import { Role } from "@/lib/db/schema/roles";
-
-export interface User {
-    userId: string;
-    email?: string;
-}
+import type { Role } from "@/lib/db/schema/roles";
+import { User } from "@/types/auth";
 
 declare global {
     namespace Express {

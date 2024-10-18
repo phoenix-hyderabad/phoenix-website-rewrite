@@ -7,7 +7,7 @@ import helmet from "helmet";
 import cors from "cors";
 import corsOptions from "@/config/cors";
 import type { ErrorRequestHandler } from "express";
-import routes from "@/api";
+import api from "@/api";
 import { AppError, HttpCode } from "@/config/errors";
 import { errorHandler } from "@/lib/middleware/errorhandler";
 import logger from "@/lib/logger";
@@ -36,7 +36,7 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cors(corsOptions));
 
-app.use("/api/", routes);
+app.use("/api/", api);
 
 // catch 404
 app.use((_req, _res, next) => {

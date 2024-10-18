@@ -15,10 +15,12 @@ class ErrorHandler {
         response?: Response
     ): void {
         logger.error(
-            `${request ? request.path + " " : ""}[${error.httpCode}]: ${error.message} | ${error.feedback ? error.feedback : "No more information available"}`
+            `${request ? request.path + " " : ""}[${error.httpCode}]: ${error.message}${error.feedback ? " | " + error.feedback : ""}`
         );
         if (response)
-            response.status(error.httpCode).json({ message: error.message });
+            response
+                .status(error.httpCode)
+                .json({ trusted: true, message: error.message });
     }
     private handleCriticalError(
         error: Error | AppError,

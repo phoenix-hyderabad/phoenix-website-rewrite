@@ -9,6 +9,8 @@ import { fromError } from "zod-validation-error";
 import db from "@/lib/db";
 import { users } from "@/lib/db/schema/users";
 import { eq } from "drizzle-orm";
+import { getAccess } from "@/lib/middleware/resources";
+import { User } from "@/types/auth";
 
 const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 const router = express.Router();
@@ -36,37 +38,45 @@ router.post(
                 idToken: parseResult.data.token,
                 audience: GOOGLE_CLIENT_ID,
             });
-            const payload = ticket.getPayload();
-            if (!payload) throw new Error("");
-            const userId = payload.sub;
-            const result = await db
-                .select()
-                .from(users)
-                .where(
-                    eq(
-                        users.email,
-                        payload.email ?? "https://youtu.be/xvFZjo5PgG0"
-                    )
-                );
-            if (!result.length)
+            const ticketPayload = ticket.getPayload();
+            if (!ticketPayload) throw new Error("");
+            try {
+                const result = await db
+                    .select()
+                    .from(users)
+                    .where(
+                        eq(
+                            users.email,
+                            ticketPayload.email ??
+                                "https://youtu.be/xvFZjo5PgG0"
+                        )
+                    );
+                if (!result.length)
+                    return next(
+                        new AppError({
+                            httpCode: HttpCode.UNAUTHORIZED,
+                            description: "This login isn't for you :)",
+                        })
+                    );
+                const jwtPayload: User = {
+                    userId: ticketPayload.sub,
+                    email: result[0].email,
+                    operations: getAccess(result[0].roles),
+                };
+                const accessToken = jwt.sign(jwtPayload, SESSION_SECRET, {
+                    expiresIn: "10m",
+                });
+                res.status(200);
+                res.json({ token: accessToken });
+            } catch (e) {
                 return next(
                     new AppError({
-                        httpCode: HttpCode.UNAUTHORIZED,
-                        description: "This login isn't for you :)",
+                        httpCode: HttpCode.INTERNAL_SERVER_ERROR,
+                        description: "Login error: database error",
+                        feedback: JSON.stringify(e as object),
                     })
                 );
-            const accessToken = jwt.sign(
-                {
-                    userId: userId,
-                    email: payload.email,
-                },
-                SESSION_SECRET,
-                {
-                    expiresIn: "1h",
-                }
-            );
-            res.status(200);
-            res.json({ token: accessToken });
+            }
         } catch (e) {
             next(
                 new AppError({
@@ -79,30 +89,28 @@ router.post(
     })
 );
 
-// Auth verify middleware
-
+// Auth middleware
+// Attaches user object to req
 router.use((req, _res, next) => {
-    const token = req.headers.authorization;
-    if (!token) {
-        return next(
-            new AppError({
-                description: "Unauthenticated",
-                httpCode: HttpCode.UNAUTHORIZED,
-            })
-        );
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return next();
     }
-    jwt.verify(token, SESSION_SECRET, (err, decoded) => {
-        if (err || !decoded || typeof decoded === "string")
-            return next(
-                new AppError({
-                    description: "Unauthorized",
-                    httpCode: HttpCode.UNAUTHORIZED,
-                })
-            );
-        req.user = {
-            userId: decoded.userId as string,
-            email: decoded.email as string | undefined,
-        };
+    const parts = authHeader.split(" ");
+    if (parts.length !== 2 || parts[0] !== "Bearer") return next();
+
+    jwt.verify(parts[1], SESSION_SECRET, (err, decoded) => {
+        if (err) return next();
+        const jwtPayloadSchema = z.object({
+            userId: z.string(),
+            email: z.string(),
+            operations: z.object({
+                allowed: z.array(z.string()),
+                disallowed: z.array(z.string()),
+            }),
+        });
+        const parsed = jwtPayloadSchema.safeParse(decoded);
+        if (parsed.success) req.user = parsed.data;
         next();
     });
 });

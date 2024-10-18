@@ -238,20 +238,22 @@ const resources = [
 
 function Resources() {
   const cardsContainer = useRef<HTMLDivElement>(null);
-  const cardsRefs = resources.map((_) => useRef<HTMLDivElement>(null));
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
   useEffect(() => {
     const moveEvent = (ev: MouseEvent) => {
-      cardsRefs.forEach((targetRef) => {
-        const target = targetRef.current;
-        if (!target) return;
-        const rect = target.getBoundingClientRect(),
+      if (!cardsContainer.current) return;
+      for (let elem of cardsContainer.current.children) {
+        if (
+          !(elem instanceof HTMLAnchorElement || elem instanceof HTMLDivElement)
+        )
+          return;
+        const rect = elem.getBoundingClientRect(),
           x = ev.clientX - rect.left,
           y = ev.clientY - rect.top;
-        target.style.setProperty("--mouse-x", `${x}px`);
-        target.style.setProperty("--mouse-y", `${y}px`);
-      });
+        elem.style.setProperty("--mouse-x", `${x}px`);
+        elem.style.setProperty("--mouse-y", `${y}px`);
+      }
     };
 
     if (matchMedia("(pointer:fine)").matches) {
@@ -312,7 +314,6 @@ function Resources() {
               heading={el.title}
               subheading={el.description}
               onClick={() => setSelectedIndex(index)}
-              ref={cardsRefs[index]}
             />
           ))}
         </div>

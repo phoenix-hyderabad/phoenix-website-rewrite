@@ -1,5 +1,6 @@
 import express from "express";
 import authRouter from "./auth";
+import inductionsRouter from "./inductions";
 
 const router = express.Router();
 
@@ -15,12 +16,8 @@ router.get("/hello", (_req, res) => {
 
 router.use(authRouter);
 
-// Protected routes
+// api routes
 
-router.get("/authorized", (_req, res) => {
-    res.status(200).json({
-        message: "Authorized!",
-    });
-});
+router.use("/inductions", inductionsRouter);
 
 export default router;

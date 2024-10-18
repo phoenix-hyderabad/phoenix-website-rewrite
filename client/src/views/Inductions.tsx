@@ -1,44 +1,76 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import TeamLinkCard from "@/components/inductions_page/TeamLinkCard";
+import { useAuth } from "@/lib/Auth";
+import axiosInstance from "@/lib/axiosInstance";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+
+interface Induction {
+  name: string;
+  url: string;
+  isOpen: boolean;
+}
+
+const fetchInductions = async (): Promise<Induction[]> => {
+  const response = await axiosInstance.get("/inductions/get");
+  return response.data;
+};
+
+const updateInduction = async (payload: Induction): Promise<Induction> => {
+  const response = await axiosInstance.patch("/inductions/update", payload);
+  return response.data;
+};
 
 function Inductions() {
-  const teams = [
-    {
-      name: "Tech\nTeam",
-      url: "/projects",
-      isOpen: false,
+  const queryClient = useQueryClient();
+
+  const {
+    data: inductions,
+    isLoading,
+    isError,
+  } = useQuery<Induction[]>(["inductions"], fetchInductions, {
+    staleTime: Infinity,
+  });
+
+  const mutation = useMutation(updateInduction, {
+    onMutate: (payload) => {
+      const previousInductions = queryClient.getQueryData<Induction[]>([
+        "inductions",
+      ]);
+      if (previousInductions) {
+        const optimisticInductions = previousInductions.map((induction) =>
+          induction.name === payload.name ? payload : induction
+        );
+        queryClient.setQueryData(["inductions"], optimisticInductions);
+      }
+      return previousInductions;
     },
-    {
-      name: "Editorial\nTeam",
-      url: "https://docs.google.com/document/d/1xNqUsbL3kC0nUq3y9JaYj6gPwAdxg8kc",
-      isOpen: true,
+    onError: (err, _vars, previousInductions) => {
+      if (previousInductions) {
+        queryClient.setQueryData(["inductions"], previousInductions);
+      }
+      if (err) toast.error("Error updating induction");
     },
-    {
-      name: "Design\nTeam",
-      url: "/",
-      isOpen: false,
-    },
-    {
-      name: "IT\nTeam",
-      url: "/",
-      isOpen: false,
-    },
-  ];
+  });
 
   const teamsContainer = useRef<HTMLDivElement>(null);
-  const teamsRefs = teams.map(() => useRef<HTMLAnchorElement>(null));
+  const { checkAccess } = useAuth();
+  const canEdit = useMemo(() => checkAccess("inductions:edit"), [checkAccess]);
 
   useEffect(() => {
     const moveEvent = (ev: MouseEvent) => {
-      teamsRefs.forEach((targetRef) => {
-        const target = targetRef.current;
-        if (!target) return;
-        const rect = target.getBoundingClientRect(),
+      if (!teamsContainer.current) return;
+      for (let elem of teamsContainer.current.children) {
+        if (
+          !(elem instanceof HTMLAnchorElement || elem instanceof HTMLDivElement)
+        )
+          return;
+        const rect = elem.getBoundingClientRect(),
           x = ev.clientX - rect.left,
           y = ev.clientY - rect.top;
-        target.style.setProperty("--mouse-x", `${x}px`);
-        target.style.setProperty("--mouse-y", `${y}px`);
-      });
+        elem.style.setProperty("--mouse-x", `${x}px`);
+        elem.style.setProperty("--mouse-y", `${y}px`);
+      }
     };
 
     if (matchMedia("(pointer:fine)").matches) {
@@ -48,7 +80,11 @@ function Inductions() {
     return () => {
       window.removeEventListener("mousemove", moveEvent);
     };
-  }, [teamsContainer]);
+  }, [teamsContainer.current]);
+
+  const toggleOpen = (elem: Induction) => {
+    mutation.mutate({ ...elem, isOpen: !elem.isOpen });
+  };
 
   return (
     <div className="mx-auto flex max-w-5xl flex-1 flex-col gap-8 p-8 text-center">
@@ -61,21 +97,30 @@ function Inductions() {
           Click on the respective team to apply.
         </p>
       </div>
-      <div
-        className="grid grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] gap-4"
-        ref={teamsContainer}
-      >
-        {teams.map((el, index) => (
-          <TeamLinkCard
-            key={index}
-            open={el.isOpen}
-            to={el.url}
-            ref={teamsRefs[index]}
-          >
-            {el.name}
-          </TeamLinkCard>
-        ))}
-      </div>
+      {isLoading ? (
+        <div>Fetching status...</div>
+      ) : isError ? (
+        <div>An error occurred.</div>
+      ) : !inductions.length ? (
+        <div>No inductions to show</div>
+      ) : (
+        <div
+          className="grid grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] gap-4"
+          ref={teamsContainer}
+        >
+          {inductions.map((el, index) => (
+            <TeamLinkCard
+              key={index}
+              open={el.isOpen}
+              to={el.url}
+              canEdit={canEdit}
+              toggleFn={() => toggleOpen(el)}
+            >
+              {el.name}
+            </TeamLinkCard>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

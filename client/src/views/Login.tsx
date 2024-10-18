@@ -2,7 +2,7 @@ import { toast } from "sonner";
 import axios from "axios";
 import { type CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { useAuth } from "@/lib/Auth";
-import { Navigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const Login = () => {
   const { authState, setAuthState } = useAuth();
@@ -17,8 +17,12 @@ const Login = () => {
         toast.success("Logged in successfully");
       })
       .catch((error) => {
-        console.error(error);
-        toast.error("Login failed");
+        if (axios.isAxiosError(error)) {
+          toast.error(error.response?.data.message || "Login failed");
+        } else {
+          console.error(error);
+          toast.error("Login failed");
+        }
       });
   };
 
@@ -27,7 +31,14 @@ const Login = () => {
       {!authState ? (
         <GoogleLogin onSuccess={onSuccess} />
       ) : (
-        <Navigate to="/" replace={true} />
+        <div className="flex flex-col gap-4">
+          <p className="whitespace-pre text-left">
+            {JSON.stringify(authState, null, 4)}
+          </p>
+          <Button className="self-center" onClick={() => setAuthState(null)}>
+            Logout
+          </Button>
+        </div>
       )}
     </div>
   );
