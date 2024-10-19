@@ -31,7 +31,7 @@ services:
     postgres:
         image: postgres:latest
         container_name: phoenix-db
-        restart: no
+        restart: "no"
         environment:
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: postgres
@@ -64,7 +64,7 @@ services:
     redis:
         image: redis:6.2.5
         container_name: phoenix-redis
-        restart: no
+        restart: "no"
         ports:
             - 6379:6379
         networks:
