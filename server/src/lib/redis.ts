@@ -15,7 +15,7 @@ client.on("connect", () => {
 });
 
 client.on("error", (error) => {
-    logger.error("Error connecting to Redis:", error);
+    logger.error(`Error connecting to Redis: ${error}`);
     process.exit(1);
 });
 
