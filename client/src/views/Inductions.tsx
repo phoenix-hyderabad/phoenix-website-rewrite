@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useRef } from "react";
-import TeamLinkCard from "@/components/inductions_page/TeamLinkCard";
+import {
+  TeamLinkCard,
+  TeamLinkCardSkeleton,
+} from "@/components/inductions_page/TeamLinkCard";
 import { useAuth } from "@/lib/Auth";
 import axiosInstance from "@/lib/axiosInstance";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -30,6 +33,7 @@ function Inductions() {
     isError,
   } = useQuery<Induction[]>(["inductions"], fetchInductions, {
     staleTime: Infinity,
+    retry: 1,
   });
 
   const mutation = useMutation(updateInduction, {
@@ -86,6 +90,15 @@ function Inductions() {
     mutation.mutate({ ...elem, isOpen: !elem.isOpen });
   };
 
+  const createEditFn = (elem: Induction) => {
+    return async (newLink: string) => {
+      return await mutation
+        .mutateAsync({ ...elem, url: newLink })
+        .then(() => true)
+        .catch(() => false);
+    };
+  };
+
   return (
     <div className="mx-auto flex max-w-5xl flex-1 flex-col gap-8 p-8 text-center">
       <div className="flex flex-col gap-4">
@@ -98,9 +111,13 @@ function Inductions() {
         </p>
       </div>
       {isLoading ? (
-        <div>Fetching status...</div>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] gap-4">
+          {[1, 2, 3, 4].map((e) => (
+            <TeamLinkCardSkeleton key={e} />
+          ))}
+        </div>
       ) : isError ? (
-        <div>An error occurred.</div>
+        <div className="text-red-500">Error while fetching inductions</div>
       ) : !inductions.length ? (
         <div>No inductions to show</div>
       ) : (
@@ -115,6 +132,7 @@ function Inductions() {
               to={el.url}
               canEdit={canEdit}
               toggleFn={() => toggleOpen(el)}
+              editFn={createEditFn(el)}
             >
               {el.name}
             </TeamLinkCard>

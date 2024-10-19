@@ -5,7 +5,7 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "inductions" (
-	"email" text PRIMARY KEY NOT NULL,
+	"name" text PRIMARY KEY NOT NULL,
 	"url" text NOT NULL,
 	"is_open" boolean DEFAULT false NOT NULL
 );
