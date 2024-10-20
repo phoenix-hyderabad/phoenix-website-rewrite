@@ -1,6 +1,6 @@
 import { pgTable, text, serial } from "drizzle-orm/pg-core";
 import { customType } from "drizzle-orm/pg-core";
-const customText = customType<{ data: string | null }>({
+export const customText = customType<{ data: string | null }>({
     dataType() {
         return "text";
     },

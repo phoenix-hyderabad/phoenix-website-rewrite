@@ -1,30 +1,22 @@
-import { AppError, HttpCode } from "@/config/errors";
-import db from "@/lib/db";
-import { professors } from "@/lib/db/schema/professors";
-import { checkAccess } from "@/lib/middleware/resources";
 import express from "express";
 import expressAsyncHandler from "express-async-handler";
 import { z } from "zod";
 import { fromError } from "zod-validation-error";
-const router = express.Router();
+import { checkAccess } from "@/lib/middleware/resources";
+import { AppError, HttpCode } from "@/config/errors";
+import db from "@/lib/db";
+import { professors } from "@/lib/db/schema/professors";
+import { eq } from "drizzle-orm";
 
 const bodySchema = z.object({
     id: z.number(),
-    faculty: z.string(),
-    designation: z.string(),
-    qualification: z.string(),
-    joinedBits: z.string(),
-    interests: z.string(),
-    coursesTaught: z.string(),
-    experiences: z.string().optional(),
-    labWebsite: z.string().optional(),
-    researchLab: z.string().optional(),
 });
 
-router.post(
+const router = express.Router();
+
+router.delete(
     "/",
-    //only admins can add porfessors for now
-    checkAccess("professors:add"),
+    checkAccess("professors:delete"),
     expressAsyncHandler(async (req, res, next) => {
         const parsed = bodySchema.safeParse(req.body);
         if (!parsed.success) {
@@ -36,18 +28,17 @@ router.post(
             );
         }
         try {
-            // Add professor to database
-            const added = await db
-                .insert(professors)
-                .values(parsed.data)
+            const deleted = await db
+                .delete(professors)
+                .where(eq(professors.id, parsed.data.id))
                 .returning();
 
-            if (added.length) res.status(HttpCode.CREATED).json(added[0]);
+            if (deleted.length) res.status(HttpCode.OK).json(deleted[0]);
             else
                 next(
                     new AppError({
                         httpCode: HttpCode.BAD_REQUEST,
-                        description: "Professor could not be added",
+                        description: "professor does not exist",
                     })
                 );
         } catch (e) {
