@@ -1,6 +1,7 @@
 import express from "express";
 import authRouter from "./auth";
 import inductionsRouter from "./inductions";
+import professorsRouter from "./professors";
 
 const router = express.Router();
 
@@ -18,6 +19,10 @@ router.use(authRouter);
 
 // api routes
 
+//inductions
 router.use("/inductions", inductionsRouter);
+
+//professors
+router.use("/professors", professorsRouter);
 
 export default router;
