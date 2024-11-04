@@ -15,12 +15,15 @@ interface Induction {
 }
 
 const fetchInductions = async (): Promise<Induction[]> => {
-  const response = await axiosInstance.get("/inductions/get");
+  const response = await axiosInstance.get<Induction[]>("/inductions/get");
   return response.data;
 };
 
 const updateInduction = async (payload: Induction): Promise<Induction> => {
-  const response = await axiosInstance.patch("/inductions/update", payload);
+  const response = await axiosInstance.patch<Induction>(
+    "/inductions/update",
+    payload
+  );
   return response.data;
 };
 
@@ -64,7 +67,7 @@ function Inductions() {
   useEffect(() => {
     const moveEvent = (ev: MouseEvent) => {
       if (!teamsContainer.current) return;
-      for (let elem of teamsContainer.current.children) {
+      for (const elem of teamsContainer.current.children) {
         if (
           !(elem instanceof HTMLAnchorElement || elem instanceof HTMLDivElement)
         )
@@ -84,7 +87,7 @@ function Inductions() {
     return () => {
       window.removeEventListener("mousemove", moveEvent);
     };
-  }, [teamsContainer.current]);
+  }, []);
 
   const toggleOpen = (elem: Induction) => {
     mutation.mutate({ ...elem, isOpen: !elem.isOpen });

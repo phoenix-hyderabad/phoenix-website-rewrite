@@ -243,7 +243,7 @@ function Resources() {
   useEffect(() => {
     const moveEvent = (ev: MouseEvent) => {
       if (!cardsContainer.current) return;
-      for (let elem of cardsContainer.current.children) {
+      for (const elem of cardsContainer.current.children) {
         if (
           !(elem instanceof HTMLAnchorElement || elem instanceof HTMLDivElement)
         )

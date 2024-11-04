@@ -10,4 +10,4 @@ COPY . .
 
 EXPOSE 9000
 
-CMD ["bun", "watch"]
+CMD ["bun", "dev"]

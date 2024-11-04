@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+
 interface HomeNewsCardProps {
   item: {
     title: string;
@@ -18,7 +18,7 @@ interface HomeNewsCardProps {
 function HomeNewsCard({ item, index }: HomeNewsCardProps) {
   return (
     <CarouselItem key={index} className="basis-1/2 select-none">
-      <Card className="flex h-full max-h-full cursor-pointer flex-col rounded-lg -carbgd hover:brightness-150">
+      <Card className="-carbgd flex h-full max-h-full cursor-pointer flex-col rounded-lg hover:brightness-150">
         <CardHeader>
           <CardTitle>{item.title}</CardTitle>
           <CardDescription>{item.description}</CardDescription>

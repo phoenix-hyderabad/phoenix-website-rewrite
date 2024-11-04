@@ -1,19 +1,15 @@
-import professors from "@/lib/professor_data";
 import ProfessorCard from "@/components/aboutus_page/ProfessorCard";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { ScrollBar } from "../ui/scroll-area";
 import { useState } from "react";
 import axiosInstance from "@/lib/axiosInstance";
 import { useQuery } from "@tanstack/react-query";
-import { TeamLinkCardSkeleton } from "../inductions_page/TeamLinkCard";
 import { Skeleton } from "../ui/skeleton";
 
 interface Professor {
@@ -24,22 +20,17 @@ interface Professor {
   joinedBits: string;
   interests: string;
   coursesTaught: string;
-  experiences?: string;
-  labWebsite?: string;
-  researchLab?: string;
+  experiences: string | null;
+  labWebsite: string | null;
+  researchLab: string | null;
 }
-function capitalizeFirstLetter(str:string) {
+
+function capitalizeFirstLetter(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 const fetchProfessors = async (): Promise<Professor[]> => {
-  const response = await axiosInstance.get("/professors/get");
-
-  const filteredKeys = Object.keys(response.data[0])
-    .filter((subject) => (response.data[0] as any)[subject] !== null)
-    .slice(2);
-
-  console.log(filteredKeys);
+  const response = await axiosInstance.get<Professor[]>("/professors/get");
   return response.data;
 };
 
@@ -79,9 +70,6 @@ const ProfsTabContent = () => {
                 <ul className="h-full divide-y-2 divide-accent-foreground/50 p-2">
                   {Object.keys(professors[selectedIndex])
                     .slice(2)
-                    .filter((subject) => (
-                      (professors[selectedIndex] as any)[subject] !== null
-                    ))
                     .map((subject, index) => (
                       <li
                         key={index}
@@ -89,7 +77,7 @@ const ProfsTabContent = () => {
                       >
                         <h2>{capitalizeFirstLetter(subject)}: </h2>
                         <div className="text-muted-foreground">
-                          {(professors[selectedIndex] as any)[subject]}
+                          {professors[selectedIndex].coursesTaught}
                         </div>
                       </li>
                     ))}

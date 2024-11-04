@@ -1,5 +1,5 @@
 import type { Role } from "@/lib/db/schema/roles";
-import { User } from "@/types/auth";
+import type { User } from "@/types/auth";
 
 declare global {
     namespace Express {

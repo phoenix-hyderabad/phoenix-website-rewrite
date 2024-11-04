@@ -7,22 +7,17 @@ import { Button } from "@/components/ui/button";
 const Login = () => {
   const { authState, setAuthState } = useAuth();
 
-  const onSuccess = async (credentialResponse: CredentialResponse) => {
+  const onSuccess = (credentialResponse: CredentialResponse) => {
     axios
-      .post("http://localhost:9000/api/login", {
+      .post<{ token: string }>("http://localhost:9000/api/login", {
         token: credentialResponse.credential,
       })
       .then((response) => {
         setAuthState(response.data.token);
         toast.success("Logged in successfully");
       })
-      .catch((error) => {
-        if (axios.isAxiosError(error)) {
-          toast.error(error.response?.data.message || "Login failed");
-        } else {
-          console.error(error);
-          toast.error("Login failed");
-        }
+      .catch(() => {
+        toast.error("Login failed");
       });
   };
 

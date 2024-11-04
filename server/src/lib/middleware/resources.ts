@@ -1,7 +1,7 @@
 import { AppError, HttpCode } from "@/config/errors";
-import { Role } from "@/lib/db/schema/roles";
-import { Access } from "@/types/auth";
-import { NextFunction, Request, Response } from "express";
+import { type Role } from "@/lib/db/schema/roles";
+import { type Access } from "@/types/auth";
+import { type NextFunction, type Request, type Response } from "express";
 
 export type RoleAccessMap = {
     [role in Role]: Access;

@@ -31,4 +31,6 @@ const ResourceCard = forwardRef(
   }
 );
 
+ResourceCard.displayName = "ResourceCard";
+
 export default ResourceCard;

@@ -16,7 +16,7 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   (error) => {
-    return Promise.reject(error);
+    return Promise.reject(error as Error);
   }
 );
 
@@ -27,15 +27,12 @@ axiosInstance.interceptors.response.use(
       if (error.response) {
         if (error.response.status === 401) {
           toast.error("Session expired. Please login again.");
-          return Promise.reject();
-        }
-        if (error.response.status === 403) {
+        } else if (error.response.status === 403) {
           toast.error("Action not allowed");
-          return Promise.reject();
         }
       }
     }
-    return Promise.reject(error);
+    return Promise.reject(error as Error);
   }
 );
 

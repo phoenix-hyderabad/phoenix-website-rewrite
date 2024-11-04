@@ -1,33 +1,34 @@
 services:
-    # phoenixapi:
-    #     build:
-    #         dockerfile: ./src/deployment/Dockerfile
-    #         context: .
-    #     container_name: phoenix-api
-    #     volumes:
-    #         - .:/app
-    #     restart: unless-stopped
-    #     ports:
-    #         - 9000:9000
-    #     depends_on:
-    #         - postgres
-    #         - redis
-    #     environment:
-    #         PORT: 9000
-    #         NODE_ENV: development
-    #         DB_USER: postgres
-    #         DB_HOST: localhost
-    #         DB_PASSWORD: postgres
-    #         DB_PORT: 5434
-    #         REDIS_URL: redis://redis:6379
-    #         JWT_PRIVATE_KEY: jwt_private_key
-    #         AUTH_REFRESH_TOKEN_SECRET: refresh_token_secret
-    #         AUTH_ACCESS_TOKEN_SECRET: access_token_secret
-    #         DEVELOPER_USERS: f20230740
-    #         TZ: Asia/Kolkata
-    #         DOCKER_ENVIRONMENT: true
-    #         HOST: "0.0.0.0"
-    #     network_mode: "host"
+    phoenixapi:
+        build:
+            dockerfile: ./src/deployment/Dockerfile
+            context: .
+        container_name: phoenix-api
+        volumes:
+            - .:/app
+        restart: unless-stopped
+        ports:
+            - 9000:9000
+        depends_on:
+            - postgres
+            - redis
+        environment:
+            PORT: 9000
+            GOOGLE_CLIENT_ID: 924517788787-qv8p8v7i3hqg08daesnagu0ikcu8qrv0.apps.googleusercontent.com
+            NODE_ENV: development
+            DB_USER: postgres
+            DB_HOST: localhost
+            DB_PASSWORD: postgres
+            DB_PORT: 5434
+            REDIS_URL: redis://redis:6379
+            JWT_PRIVATE_KEY: jwt_private_key
+            AUTH_REFRESH_TOKEN_SECRET: refresh_token_secret
+            AUTH_ACCESS_TOKEN_SECRET: access_token_secret
+            DEVELOPER_USERS: f20230740
+            TZ: Asia/Kolkata
+            DOCKER_ENVIRONMENT: true
+            HOST: "0.0.0.0"
+        network_mode: "host"
     postgres:
         image: postgres:latest
         container_name: phoenix-db

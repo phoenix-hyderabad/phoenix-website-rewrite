@@ -49,4 +49,6 @@ const ProjectCard = forwardRef(
   }
 );
 
+ProjectCard.displayName = "ProjectCard";
+
 export default ProjectCard;

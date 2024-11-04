@@ -4,8 +4,6 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
-import { Link as RouterLink } from "react-router-dom";
-import phoenixLogo from "@/assets/phoenix-logo.svg";
 import { InstagramLogoIcon, LinkedInLogoIcon } from "@radix-ui/react-icons";
 import { Facebook } from "lucide-react";
 

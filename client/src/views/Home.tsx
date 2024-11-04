@@ -98,7 +98,7 @@ const handleImageHover: MouseEventHandler<HTMLDivElement> = (e) => {
   const vertical = clientY - top - height / 2;
   const rotateX = ((horizontal / width) * THRESHOLD).toFixed(2);
   const rotateY = ((vertical / height) * THRESHOLD).toFixed(2);
-  currentTarget.style.transform = `perspective(${width}px) rotateX(${rotateY}deg) rotateY(${-rotateX}deg) scale3d(1, 1, 1)`;
+  currentTarget.style.transform = `perspective(${width}px) rotateX(${rotateY}deg) rotateY(-${rotateX}deg) scale3d(1, 1, 1)`;
 };
 
 const resetImageTransform: MouseEventHandler<HTMLDivElement> = (e) => {
@@ -107,19 +107,21 @@ const resetImageTransform: MouseEventHandler<HTMLDivElement> = (e) => {
 
 function Home() {
   const linksContainer = useRef<HTMLDivElement>(null);
-  const linkRefs = links.map((_) => useRef<HTMLAnchorElement>(null));
 
   useEffect(() => {
     const moveEvent = (ev: MouseEvent) => {
-      linkRefs.forEach((targetRef) => {
-        const target = targetRef.current;
-        if (!target) return;
-        const rect = target.getBoundingClientRect(),
+      if (!linksContainer.current) return;
+      for (const elem of linksContainer.current.children) {
+        if (
+          !(elem instanceof HTMLAnchorElement || elem instanceof HTMLDivElement)
+        )
+          return;
+        const rect = elem.getBoundingClientRect(),
           x = ev.clientX - rect.left,
           y = ev.clientY - rect.top;
-        target.style.setProperty("--mouse-x", `${x}px`);
-        target.style.setProperty("--mouse-y", `${y}px`);
-      });
+        elem.style.setProperty("--mouse-x", `${x}px`);
+        elem.style.setProperty("--mouse-y", `${y}px`);
+      }
     };
 
     if (matchMedia("(pointer:fine)").matches) {
@@ -203,7 +205,7 @@ function Home() {
             ref={linksContainer}
           >
             {links.map((link, index) => (
-              <QuickLinkCard key={index} ref={linkRefs[index]} to={link.link}>
+              <QuickLinkCard key={index} to={link.link}>
                 {link.title}
               </QuickLinkCard>
             ))}

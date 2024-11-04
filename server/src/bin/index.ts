@@ -32,7 +32,6 @@ server.listen(port, () => {
 server.on("clientError", onClientError);
 
 if (import.meta.hot) {
-    /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
     function closeServer() {
         process.removeAllListeners();
         server.close();
@@ -45,7 +44,6 @@ if (import.meta.hot) {
         closeServer();
         logger.info("HMR: DISPOSE");
     });
-    /* eslint-enable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
 }
 
 /**

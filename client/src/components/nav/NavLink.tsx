@@ -5,7 +5,9 @@ import { Link as RouterLink } from "react-router-dom";
 
 export const NavLink = ({ to, ...props }: LinkProps) => {
   const { pathname } = useLocation();
-  const isActive = pathname.endsWith(to.toString());
+  const isActive = pathname.endsWith(
+    typeof to === "string" ? to : to.pathname || "amogus"
+  );
 
   return (
     <NavigationMenuLink asChild active={isActive}>

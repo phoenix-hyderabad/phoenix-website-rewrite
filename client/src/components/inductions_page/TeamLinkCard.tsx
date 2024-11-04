@@ -32,7 +32,9 @@ export const TeamLinkCard = forwardRef(
     } & LinkProps,
     ref: React.ForwardedRef<HTMLAnchorElement>
   ) => {
-    const [linkInputVal, setLinkInputVal] = useState(props.to.toString());
+    const [linkInputVal, setLinkInputVal] = useState(
+      typeof props.to === "string" ? props.to : (props.to.pathname ?? "")
+    );
     const [dialogOpen, setDialogOpen] = useState(false);
     const inner = (
       <>
@@ -81,13 +83,20 @@ export const TeamLinkCard = forwardRef(
                 <DialogFooter>
                   <Button
                     type="submit"
-                    onClick={async () => {
-                      if (await editFn(linkInputVal)) {
-                        setDialogOpen(false);
-                        toast.success("Edited link successfully");
-                      }
+                    onClick={() => {
+                      void editFn(linkInputVal).then((success) => {
+                        if (success) {
+                          setDialogOpen(false);
+                          toast.success("Edited link successfully");
+                        }
+                      });
                     }}
-                    disabled={linkInputVal === props.to.toString()}
+                    disabled={
+                      linkInputVal ===
+                      (typeof props.to === "string"
+                        ? props.to
+                        : props.to.pathname)
+                    }
                   >
                     Save changes
                   </Button>
@@ -102,9 +111,10 @@ export const TeamLinkCard = forwardRef(
     return open ? (
       <Link
         ref={ref}
-        className={
-          "before:border-glow relative flex w-full flex-col gap-4 rounded-2xl bg-card px-2 py-4 before:absolute before:-bottom-[1px] before:-left-[1px] before:-right-[1px] before:-top-[1px] before:-z-10 before:rounded-2xl before:content-[''] max-lg:justify-between max-sm:flex-col"
-        }
+        className={cn(
+          "before:border-glow relative flex w-full flex-col gap-4 rounded-2xl bg-card px-2 py-4 before:absolute before:-bottom-[1px] before:-left-[1px] before:-right-[1px] before:-top-[1px] before:-z-10 before:rounded-2xl before:content-[''] max-lg:justify-between max-sm:flex-col",
+          className
+        )}
         referrerPolicy="no-referrer"
         target="_blank"
         {...props}
@@ -118,6 +128,7 @@ export const TeamLinkCard = forwardRef(
     );
   }
 );
+TeamLinkCard.displayName = "TeamLinkCard";
 
 export const TeamLinkCardSkeleton = () => {
   return (

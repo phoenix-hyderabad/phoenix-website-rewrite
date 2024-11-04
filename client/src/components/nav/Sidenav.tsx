@@ -7,11 +7,12 @@ import { cn } from "@/lib/utils";
 
 const Sidenav = () => {
   const [isOpen, setIsOpen] = useState(false);
-
+  const { pathname } = useLocation();
   const Link = useCallback(
     ({ className, ...props }: LinkProps) => {
-      const { pathname } = useLocation();
-      const isActive = pathname.endsWith(props.to.toString());
+      const isActive = pathname.endsWith(
+        typeof props.to === "string" ? props.to : props.to.pathname || "amogus"
+      );
       return (
         <RouterLink
           className={cn(
@@ -26,7 +27,7 @@ const Sidenav = () => {
         ></RouterLink>
       );
     },
-    [setIsOpen]
+    [pathname]
   );
 
   return (

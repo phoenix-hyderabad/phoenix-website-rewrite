@@ -10,7 +10,7 @@ import db from "@/lib/db";
 import { users } from "@/lib/db/schema/users";
 import { eq } from "drizzle-orm";
 import { getAccess } from "@/lib/middleware/resources";
-import { User } from "@/types/auth";
+import { type User } from "@/types/auth";
 
 const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 const router = express.Router();

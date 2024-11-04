@@ -14,7 +14,7 @@
     "scripts": {
         "start": "vite-node src/bin/index.ts",
         "eslint:fix": "eslint --quiet --fix",
-        "watch": "vite-node --watch.usePolling -w src/bin/index.ts",
+        "dev": "nodemon --exec vite-node src/bin/index.ts ./static/",
         "format": "prettier --write --ignore-unknown .",
         "db:push": "drizzle-kit push",
         "db:studio": "drizzle-kit studio",
@@ -63,6 +63,7 @@
         "husky": "^9.1.6",
         "jest": "^29.7.0",
         "lint-staged": "^15.2.10",
+        "nodemon": "^3.1.7",
         "prettier": "^3.3.3",
         "rimraf": "^5.0.5",
         "ts-jest": "^29.1.1",
