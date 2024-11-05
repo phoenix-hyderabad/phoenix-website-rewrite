@@ -49,8 +49,8 @@ const ProfsTabContent = () => {
       <h2 className="py-4 text-center text-3xl">Professors</h2>
       <div className="grid grid-cols-[repeat(auto-fit,minmax(19rem,max-content))] justify-center gap-4">
         {isLoading ? (
-          <div>
-            {[1, 2, 3, 4].map((e) => (
+          <div className="grid grid-cols-3 justify-center gap-4">
+            {[1, 2, 3, 4, 5, 6].map((e) => (
               <ProfessorCardSkeleton key={e} />
             ))}
           </div>
@@ -106,9 +106,12 @@ const ProfsTabContent = () => {
 
 export const ProfessorCardSkeleton = () => {
   return (
-    <div className="relative flex w-full flex-col items-center gap-4 rounded-2xl bg-card px-2 py-4 brightness-75">
-      <Skeleton className="h-36 w-36" />
-      <Skeleton className="h-24 w-24" />
+    <div className="flex flex-col space-y-3 justify-center  bg-card p-6 rounded-lg">
+      <Skeleton className="h-[70px] w-[70px] rounded-full ml-auto mr-auto" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-[240px]" />
+        <Skeleton className="h-4 w-[240px]" />
+      </div>
     </div>
   );
 };
