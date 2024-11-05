@@ -3,6 +3,7 @@ import authRouter from "./auth";
 import inductionsRouter from "./inductions";
 import professorsRouter from "./professors";
 import projectsRouter from "./projects";
+import robowarsRouter from "./robowars";
 
 const router = express.Router();
 
@@ -13,5 +14,6 @@ router.use(authRouter);
 router.use("/inductions", inductionsRouter);
 router.use("/professors", professorsRouter);
 router.use("/projects", projectsRouter);
+router.use("/robowars", robowarsRouter);
 
 export default router;

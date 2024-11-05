@@ -8,6 +8,7 @@ import * as inductions from "./schema/inductions";
 import * as professors from "./schema/professors";
 import * as members from "./schema/members";
 import * as projects from "./schema/projects";
+import * as config from "./schema/config";
 
 const pool = new Pool({
     ...CONFIG_PG,
@@ -21,6 +22,7 @@ const db = drizzle(pool, {
         ...professors,
         ...members,
         ...projects,
+        ...config,
     },
 });
 
