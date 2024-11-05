@@ -49,8 +49,8 @@ const ProfsTabContent = () => {
       <h2 className="py-4 text-center text-3xl">Professors</h2>
       <div className="grid grid-cols-[repeat(auto-fit,minmax(19rem,max-content))] justify-center gap-4">
         {isLoading ? (
-          <div className="grid grid-cols-3 justify-center gap-4">
-            {[1, 2, 3, 4, 5, 6].map((e) => (
+          <div className="grid grid-cols-1  sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[1, 2, 3].map((e) => (
               <ProfessorCardSkeleton key={e} />
             ))}
           </div>
