@@ -2,7 +2,6 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { LinkProps, Link as RouterLink, useLocation } from "react-router-dom";
-import phoenixLogo from "@/assets/phoenix-logo.svg";
 import { cn } from "@/lib/utils";
 
 const Sidenav = () => {
@@ -47,7 +46,7 @@ const Sidenav = () => {
           onClick={() => setIsOpen(false)}
         >
           <img
-            src={phoenixLogo}
+            src="/phoenix-logo.svg"
             loading="lazy"
             decoding="async"
             className="h-10 object-contain"

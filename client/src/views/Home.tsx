@@ -1,7 +1,6 @@
 import { MouseEventHandler, useEffect, useRef } from "react";
 import HomeNewsCard from "@/components/home_page/HomeNewsCard";
 import dummyImg from "@/assets/img1.png";
-import phoenixLogo from "@/assets/phoenix-logo.svg";
 
 import {
   Carousel,
@@ -155,7 +154,7 @@ function Home() {
             onMouseLeave={resetImageTransform}
           >
             <img
-              src={phoenixLogo}
+              src="/phoenix-logo.svg"
               alt="About"
               className="object-fit h-full max-w-64 opacity-50"
             />

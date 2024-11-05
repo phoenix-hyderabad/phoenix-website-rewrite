@@ -4,7 +4,6 @@ import {
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
 import { Link as RouterLink } from "react-router-dom";
-import phoenixLogo from "@/assets/phoenix-logo.svg";
 import { NavLink as Link } from "@/components/nav/NavLink";
 import Sidenav from "@/components/nav/Sidenav";
 
@@ -13,7 +12,7 @@ const Navbar = () => {
     <div className="sticky inset-x-0 top-0 z-50 flex h-16 w-full items-center justify-between border-b bg-background/75 px-4 backdrop-blur-lg transition-all">
       <RouterLink to="/" className="flex items-center gap-2 text-xl">
         <img
-          src={phoenixLogo}
+          src="phoenix-logo.svg"
           loading="lazy"
           decoding="async"
           className="h-10 object-contain"
