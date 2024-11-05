@@ -1,5 +1,4 @@
 import { pgTable, text, serial, boolean } from "drizzle-orm/pg-core";
-import { customText } from "./professors";
 
 export const members = pgTable("members", {
     id: serial("id").primaryKey(),
@@ -7,7 +6,7 @@ export const members = pgTable("members", {
     current: boolean("current").notNull(),
     student: text("student").notNull(),
     designation: text("designation").notNull().default("member"),
-    team: customText("team"),
-    contact: customText("contact").default(null),
-    socials: customText("socials").default(null),
+    team: text("team"),
+    contact: text("contact"),
+    socials: text("socials"),
 });

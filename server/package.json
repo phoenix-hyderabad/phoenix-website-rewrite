@@ -21,7 +21,8 @@
         "db:generate": "drizzle-kit generate",
         "db:migrate": "drizzle-kit migrate",
         "lint-staged": "lint-staged",
-        "prepare": "cd .. && husky server/.husky"
+        "prepare": "cd .. && husky server/.husky",
+        "populate_db": "vite-node src/scripts/populateDb/all.ts"
     },
     "dependencies": {
         "@types/jsonwebtoken": "^9.0.7",

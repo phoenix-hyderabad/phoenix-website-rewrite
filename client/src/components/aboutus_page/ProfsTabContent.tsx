@@ -49,7 +49,7 @@ const ProfsTabContent = () => {
       <h2 className="py-4 text-center text-3xl">Professors</h2>
       <div className="grid grid-cols-[repeat(auto-fit,minmax(19rem,max-content))] justify-center gap-4">
         {isLoading ? (
-          <div className="grid grid-cols-1  sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map((e) => (
               <ProfessorCardSkeleton key={e} />
             ))}
@@ -68,19 +68,26 @@ const ProfsTabContent = () => {
               </DialogHeader>
               <ScrollArea className="flex max-h-[70dvh] flex-col">
                 <ul className="h-full divide-y-2 divide-accent-foreground/50 p-2">
-                  {Object.keys(professors[selectedIndex])
+                  {Object.entries(professors[selectedIndex])
                     .slice(2)
-                    .map((subject, index) => (
-                      <li
-                        key={index}
-                        className="flex flex-col gap-4 py-2 sm:flex-col"
-                      >
-                        <h2>{capitalizeFirstLetter(subject)}: </h2>
-                        <div className="text-muted-foreground">
-                          {professors[selectedIndex].coursesTaught}
-                        </div>
-                      </li>
-                    ))}
+                    .map(([subject, value], index) => {
+                      const content = value as string;
+                      if (!content) return null;
+                      return (
+                        <li
+                          key={index}
+                          className="flex flex-col gap-4 py-2 sm:flex-col"
+                        >
+                          <h2>
+                            {capitalizeFirstLetter(
+                              subject.replace(/([a-z])([A-Z])/g, "$1 $2")
+                            )}
+                            :
+                          </h2>
+                          <div className="text-muted-foreground">{content}</div>
+                        </li>
+                      );
+                    })}
                 </ul>
                 <ScrollBar orientation="vertical" />
               </ScrollArea>
@@ -106,8 +113,8 @@ const ProfsTabContent = () => {
 
 export const ProfessorCardSkeleton = () => {
   return (
-    <div className="flex flex-col space-y-3 justify-center  bg-card p-6 rounded-lg">
-      <Skeleton className="h-[70px] w-[70px] rounded-full ml-auto mr-auto" />
+    <div className="flex flex-col justify-center space-y-3 rounded-lg bg-card p-6">
+      <Skeleton className="ml-auto mr-auto h-[70px] w-[70px] rounded-full" />
       <div className="space-y-2">
         <Skeleton className="h-4 w-[240px]" />
         <Skeleton className="h-4 w-[240px]" />
