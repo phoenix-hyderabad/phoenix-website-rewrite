@@ -2,27 +2,16 @@ import express from "express";
 import authRouter from "./auth";
 import inductionsRouter from "./inductions";
 import professorsRouter from "./professors";
+import projectsRouter from "./projects";
 
 const router = express.Router();
 
-// Public routes
-
-router.get("/hello", (_req, res) => {
-    res.status(200).json({
-        message: "Hello!",
-    });
-});
-
 // Auth routes and middleware
-
 router.use(authRouter);
 
 // api routes
-
-//inductions
 router.use("/inductions", inductionsRouter);
-
-//professors
 router.use("/professors", professorsRouter);
+router.use("/projects", projectsRouter);
 
 export default router;

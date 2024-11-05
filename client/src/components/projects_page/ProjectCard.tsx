@@ -1,6 +1,7 @@
 import { forwardRef } from "react";
 import { DialogTrigger } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const ProjectCard = forwardRef(
   (
@@ -26,7 +27,7 @@ const ProjectCard = forwardRef(
             <CardTitle>{name}</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col">
-            <div className="relative h-56 overflow-hidden">
+            <div className="relative h-56 min-h-56 overflow-hidden">
               <img
                 src={coverImage}
                 decoding="async"
@@ -50,5 +51,18 @@ const ProjectCard = forwardRef(
 );
 
 ProjectCard.displayName = "ProjectCard";
+
+export const ProjectCardSkeleton = () => (
+  <Card className="flex max-w-80 cursor-pointer flex-col hover:brightness-150">
+    <CardHeader>
+      <CardTitle className="flex flex-col items-center">
+        <Skeleton className="h-5 w-40 rounded-l" />
+      </CardTitle>
+    </CardHeader>
+    <CardContent className="flex flex-col">
+      <Skeleton className="h-56 rounded-lg" />
+    </CardContent>
+  </Card>
+);
 
 export default ProjectCard;

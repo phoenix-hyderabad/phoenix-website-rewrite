@@ -96,9 +96,9 @@ const handleImageHover: MouseEventHandler<HTMLDivElement> = (e) => {
 
   const horizontal = clientX - left - width / 2;
   const vertical = clientY - top - height / 2;
-  const rotateX = ((horizontal / width) * THRESHOLD).toFixed(2);
+  const rotateX = ((horizontal / width) * -THRESHOLD).toFixed(2);
   const rotateY = ((vertical / height) * THRESHOLD).toFixed(2);
-  currentTarget.style.transform = `perspective(${width}px) rotateX(${rotateY}deg) rotateY(-${rotateX}deg) scale3d(1, 1, 1)`;
+  currentTarget.style.transform = `perspective(${width}px) rotateX(${rotateY}deg) rotateY(${rotateX}deg) scale3d(1, 1, 1)`;
 };
 
 const resetImageTransform: MouseEventHandler<HTMLDivElement> = (e) => {
