@@ -101,6 +101,11 @@
 }
 
 @font-face {
-  font-family: "phoenix";
-  src: url("@/assets/fonts/PHoEnix-Regular.otf");
+  font-family: "miyoshi";
+  src: url("@/assets/fonts/Miyoshi.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "atom";
+  src: url("@/assets/fonts/Atom.woff2") format("woff2");
 }

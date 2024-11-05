@@ -22,8 +22,13 @@ const Navbar = () => {
         PHoEnix
       </RouterLink>
 
-      <NavigationMenu className="max-sm:hidden">
+      <NavigationMenu className="max-lg:hidden">
         <NavigationMenuList>
+          <NavigationMenuItem>
+            <Link to="robowars" className="bg-red-700">
+              Robo Wars
+            </Link>
+          </NavigationMenuItem>
           <NavigationMenuItem>
             <Link to="resources">Resources</Link>
           </NavigationMenuItem>

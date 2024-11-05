@@ -13,6 +13,7 @@ import Login from "@/views/Login";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { AuthProvider } from "@/lib/Auth";
+import Robowars from "./views/RoboWars";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/home" element={<Home />} />
+              <Route path="/robowars" element={<Robowars />} />
               <Route path="/resources" element={<Resources />} />
               <Route path="/projects" element={<Projects />} />
               <Route path="/inductions" element={<Inductions />} />

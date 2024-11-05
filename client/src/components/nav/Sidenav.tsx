@@ -35,7 +35,7 @@ const Sidenav = () => {
       <SheetTrigger asChild>
         <Button
           variant="ghost"
-          className="bg-accent transition-colors sm:hidden"
+          className="bg-accent transition-colors lg:hidden"
         >
           {isOpen ? "✕" : "☰"}
         </Button>
@@ -56,6 +56,9 @@ const Sidenav = () => {
           PHoEnix
         </RouterLink>
         <nav className="flex flex-col gap-2">
+          <Link to="robowars" className="bg-red-700">
+            Robo Wars
+          </Link>
           <Link to="resources">Resources</Link>
           <Link to="projects">Projects</Link>
           <Link to="https://drive.google.com/file/d/1P5ADJ4ycYUwZPm9PwafI2eDr0bUo0Aia/view?usp=sharing">
