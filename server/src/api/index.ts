@@ -4,6 +4,7 @@ import inductionsRouter from "./inductions";
 import professorsRouter from "./professors";
 import projectsRouter from "./projects";
 import robowarsRouter from "./robowars";
+import newsRouter from  './news';
 
 const router = express.Router();
 
@@ -15,5 +16,6 @@ router.use("/inductions", inductionsRouter);
 router.use("/professors", professorsRouter);
 router.use("/projects", projectsRouter);
 router.use("/robowars", robowarsRouter);
+router.use("/news", newsRouter);
 
 export default router;

@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { LoadingSpinner } from "@/components/ui/spinner";
+// import { LoadingSpinner } from "@/components/ui/spinner";
 import { useAuth } from "@/lib/Auth";
 import axiosInstance from "@/lib/axiosInstance";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -72,13 +72,13 @@ const Robowars = () => {
     <div className="flex flex-1 flex-col bg-[#EC2023] px-2 pb-2 text-center">
       <div className="flex w-full max-w-6xl flex-col self-center">
         <div className="relative flex flex-col text-center">
-          <h1 className="font-atom relative text-[10rem] text-black">ROBO</h1>
-          <div className="font-miyoshi absolute left-0 top-0 flex h-full w-full -rotate-12 items-center justify-center text-8xl text-[#EC2023] [text-shadow:_-1px_1px_0_#000,1px_1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000]">
+          <h1 className="relative font-atom text-[10rem] text-black">ROBO</h1>
+          <div className="absolute left-0 top-0 flex h-full w-full -rotate-12 items-center justify-center font-miyoshi text-8xl text-[#EC2023] [text-shadow:_-1px_1px_0_#000,1px_1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000]">
             WARS
           </div>
         </div>
         {isLoading ? (
-          <LoadingSpinner className="h-8 w-8 self-center text-black" />
+          <div>Loading...</div>
         ) : (
           <>
             <iframe

@@ -15,27 +15,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import QuickLinkCard from "@/components/home_page/QuickLinkCard";
-
-const news = [
-  {
-    title: "Upcoming Workshop: Personal Branding",
-    description:
-      "Join us for an interactive workshop on building a strong personal brand. Learn from industry experts and network with like-minded individuals.",
-    date: "June 15, 2023",
-  },
-  {
-    title: "New Mentorship Program Launched",
-    description:
-      "We're excited to announce the launch of our new mentorship program, connecting aspiring professionals with experienced industry leaders.",
-    date: "May 1, 2023",
-  },
-  {
-    title: "New Mentorship Program Launched",
-    description:
-      "We're excited to announce the launch of our new mentorship program, connecting aspiring professionals with experienced industry leaders.",
-    date: "May 1, 2023",
-  },
-];
+import axiosInstance from "@/lib/axiosInstance";
+import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const links = [
   {
@@ -87,6 +69,16 @@ const projects = [
   },
 ];
 
+export interface News {
+  title: string;
+  description: string;
+  url?: string;
+  venue: string;
+  timings: string;
+  contactName: string;
+  contactNumber: string;
+}
+
 const THRESHOLD = 50;
 
 const handleImageHover: MouseEventHandler<HTMLDivElement> = (e) => {
@@ -104,7 +96,21 @@ const resetImageTransform: MouseEventHandler<HTMLDivElement> = (e) => {
   e.currentTarget.style.transform = `perspective(${e.currentTarget.clientWidth}px) rotateX(0deg) rotateY(0deg)`;
 };
 
+const fetchNews = async (): Promise<News[]> => {
+  const response = await axiosInstance.get<News[]>("/news/get");
+  return response.data;
+};
+
 function Home() {
+  const {
+    data: news,
+    isLoading,
+    isError,
+  } = useQuery<News[]>(["news"], fetchNews, {
+    staleTime: Infinity,
+    retry: 1,
+  });
+
   const linksContainer = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -172,21 +178,44 @@ function Home() {
               important announcements from the Phoenix Association.
             </p>
           </div>
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            orientation="vertical"
-            className="md:flex-1"
-          >
-            <CarouselContent className="h-[25rem]">
-              {news.map((item, index) => (
-                <HomeNewsCard key={index} item={item} index={index} />
-              ))}
-            </CarouselContent>
-            <CarouselNext />
-          </Carousel>
+          {isLoading ? (
+            <div className="flex flex-col space-y-3">
+              <Skeleton className="h-[125px] w-[250px] rounded-xl" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-[250px]" />
+                <Skeleton className="h-4 w-[200px]" />
+              </div>
+            </div>
+          ) : isError ? (
+            <div>Error while fetching news</div>
+          ) : !news.length ? (
+            <div>No news to show</div>
+          ) : (
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              orientation="vertical"
+              className="md:flex-1"
+            >
+              <CarouselContent className="h-[25rem]">
+                {news.map((item, index) => (
+                  <HomeNewsCard
+                    key={index}
+                    url={item.url}
+                    title={item.title}
+                    description={item.description}
+                    venue={item.venue}
+                    timings={item.timings}
+                    contactName={item.contactName}
+                    contactNumber={item.contactNumber}
+                  />
+                ))}
+              </CarouselContent>
+              <CarouselNext />
+            </Carousel>
+          )}
         </div>
       </section>
 
