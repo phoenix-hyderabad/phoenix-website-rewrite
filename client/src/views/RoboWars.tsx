@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-// import { LoadingSpinner } from "@/components/ui/spinner";
+import { LoadingSpinner } from "@/components/ui/spinner";
 import { useAuth } from "@/lib/Auth";
 import axiosInstance from "@/lib/axiosInstance";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -78,7 +78,7 @@ const Robowars = () => {
           </div>
         </div>
         {isLoading ? (
-          <div>Loading...</div>
+          <LoadingSpinner className="h-8 w-8 self-center text-black" />
         ) : (
           <>
             <iframe
