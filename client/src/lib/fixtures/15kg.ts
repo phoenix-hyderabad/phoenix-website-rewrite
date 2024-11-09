@@ -76,11 +76,11 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
       state: "",
       participants: [
         {
-          id: "arhtavinyak",
+          id: "blackdiamond",
           resultText: "",
           isWinner: false,
           status: "",
-          name: "Arhtavinyak",
+          name: "Black Diamond",
         },
         {
           id: "fatboy",
@@ -100,11 +100,11 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
       state: "",
       participants: [
         {
-          id: "hore",
+          id: "gladiators",
           resultText: "",
           isWinner: false,
           status: "", // change to PLAYED
-          name: "Hore",
+          name: "Gladiators",
         },
         //change to winner of match 1
         //   {

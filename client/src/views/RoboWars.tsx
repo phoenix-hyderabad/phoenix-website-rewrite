@@ -15,9 +15,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 import z from "zod";
-import dataDoublePlayoffs from "@/lib/bracket_data";
 import data8kg from "@/lib/fixtures/8kg";
 import data3lb from "@/lib/fixtures/3lbs";
+import data15kg from "@/lib/fixtures/3lbs";
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
 import StyledTabTrigger from "@/components/aboutus_page/StyledTabTrigger";
 import FixtureContent from "@/components/robowars_page/fixtures";
@@ -90,7 +90,10 @@ const Robowars = () => {
             <iframe
               width="560"
               height="315"
-              src={link ?? "https://www.youtube.com/embed/dQw4w9WgXcQ"}
+              src={
+                link ??
+                "https://www.youtube.com/embed/live_stream?channel=UCnzm_iVbuXd7YJJrSqMspCg"
+              }
               title="YouTube video player"
               className="self-center border-none"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -143,7 +146,7 @@ const Robowars = () => {
           </TabsList>
           <div className="py-3" />
           <TabsContent value="15" className="m-0 flex flex-col">
-            <FixtureContent playoffData={dataDoublePlayoffs} />
+            <FixtureContent playoffData={data15kg} />
           </TabsContent>
           <TabsContent value="3" className="m-0 flex flex-col">
             <FixtureContent playoffData={data3lb} />
