@@ -4,17 +4,17 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
   upper: [
     {
       id: "0",
-      name: "walk over",
+      name: "",
       nextMatchId: "4",
       nextLooserMatchId: null,
       startTime: null,
-      state: "WALK_OVER",
+      state: "NO_SHOW",
       participants: [
         {
           id: "gladiators",
           resultText: "",
-          isWinner: true,
-          status: "WALK_OVER",
+          isWinner: false,
+          status: "",
           name: "Gladiators",
         },
       ],
@@ -195,18 +195,18 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
   lower: [
     {
       id: "-4",
-      name: "walk over",
+      name: "",
       nextMatchId: "7",
       nextLooserMatchId: null,
       startTime: null,
-      state: "WALK_OVER",
+      state: "NO_SHOW",
       participants: [
         // change to loser of match 1
         {
           id: "TBD",
           resultText: "",
-          isWinner: true,
-          status: "WALK_OVER",
+          isWinner: false,
+          status: "",
           name: "TBD",
         },
       ],

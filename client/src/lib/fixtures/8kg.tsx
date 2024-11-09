@@ -4,34 +4,34 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
   upper: [
     {
       id: "-234",
-      name: "walk over",
+      name: "",
       nextMatchId: "2",
       nextLooserMatchId: null,
       startTime: null,
-      state: "WALK_OVER",
+      state: "NO_SHOW",
       participants: [
         {
           id: "wartex",
           resultText: "",
           isWinner: true,
-          status: "WALK_OVER",
+          status: "",
           name: "Wartex",
         },
       ],
     },
     {
       id: "-2344",
-      name: "walk over",
+      name: "",
       nextMatchId: "2",
       nextLooserMatchId: null,
       startTime: null,
-      state: "WALK_OVER",
+      state: "NO_SHOW",
       participants: [
         {
           id: "byte",
           resultText: "",
           isWinner: true,
-          status: "WALK_OVER",
+          status: "",
           name: "Byte",
         },
       ],
@@ -62,17 +62,17 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
     },
     {
       id: "0",
-      name: "walk over",
+      name: "",
       nextMatchId: "3",
       nextLooserMatchId: null,
       startTime: "Sat Nov 09 2024 13:20:00 GMT+0530",
-      state: "WALK_OVER",
+      state: "NO_SHOW",
       participants: [
         {
           id: "orcus",
           resultText: "",
           isWinner: true,
-          status: "WALK_OVER",
+          status: "",
           name: "Orcus",
         },
       ],
@@ -180,18 +180,18 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
   lower: [
     {
       id: "-22344",
-      name: "walk over",
+      name: "",
       nextMatchId: "4",
       nextLooserMatchId: null,
       startTime: null,
-      state: "WALK_OVER",
+      state: "NO_SHOW",
       participants: [
         // change to loser of match 1
         {
           id: "TBD",
           resultText: "",
           isWinner: true,
-          status: "WALK_OVER",
+          status: "",
           name: "TBD",
         },
       ],
