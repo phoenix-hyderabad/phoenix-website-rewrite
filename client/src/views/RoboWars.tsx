@@ -92,7 +92,8 @@ const Robowars = () => {
               height="315"
               src={
                 link ??
-                "https://www.youtube.com/embed/live_stream?channel=UCnzm_iVbuXd7YJJrSqMspCg"
+                //"https://www.youtube.com/embed/live_stream?channel=UCnzm_iVbuXd7YJJrSqMspCg"
+                "https://www.youtube.com/embed/R-idpzlkj04?si=7oiTYMMtL6UJWeQT"
               }
               title="YouTube video player"
               className="self-center border-none"
