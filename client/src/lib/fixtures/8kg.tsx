@@ -41,7 +41,7 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
       name: "Match 1",
       nextMatchId: "3",
       nextLooserMatchId: "4",
-      startTime: "Sat Nov 09 2024 13:20:00 GMT+0530",
+      startTime: null,
       state: "",
       participants: [
         {
@@ -65,7 +65,7 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
       name: "",
       nextMatchId: "3",
       nextLooserMatchId: null,
-      startTime: "Sat Nov 09 2024 13:20:00 GMT+0530",
+      startTime: null,
       state: "NO_SHOW",
       participants: [
         {
@@ -82,7 +82,7 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
       name: "Match 3",
       nextMatchId: "5",
       nextLooserMatchId: "6",
-      startTime: "Sat Nov 09 2024 17:40:00 GMT+0530",
+      startTime: null,
       state: "", // change to SCORE_DONE
       participants: [
         {
@@ -107,7 +107,7 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
       name: "Match 2",
       nextMatchId: "5",
       nextLooserMatchId: "4",
-      startTime: "Sat Nov 09 2024 13:00:00 GMT+0530",
+      startTime: null,
       state: "", // change to SCORE_DONE
       participants: [
         {
@@ -131,7 +131,7 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
       name: "5",
       nextMatchId: "8",
       nextLooserMatchId: "7",
-      startTime: "TBD",
+      startTime: null,
       state: "",
       participants: [
         //   {
@@ -156,7 +156,7 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
       name: "8",
       nextMatchId: null,
       nextLooserMatchId: null,
-      startTime: "TBD",
+      startTime: null,
       state: "",
       participants: [
         //   {
@@ -212,7 +212,7 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
       name: "4",
       nextMatchId: "6",
       nextLooserMatchId: null,
-      startTime: "Sat Nov 09 2024 18:00:00 GMT+0530",
+      startTime: null,
       state: "",
       participants: [
         //   {
@@ -255,7 +255,7 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
       name: "6",
       nextMatchId: "7",
       nextLooserMatchId: null,
-      startTime: "TBD",
+      startTime: null,
       state: "",
       participants: [
         //   {
@@ -280,7 +280,7 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
       name: "7",
       nextMatchId: "8",
       nextLooserMatchId: null,
-      startTime: "TBD",
+      startTime: null,
       state: "",
       participants: [
         //   {
