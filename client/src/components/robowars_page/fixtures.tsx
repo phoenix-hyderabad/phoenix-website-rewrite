@@ -22,7 +22,7 @@ const FixtureContent = ({
   const [width] = useWindowSize();
   const finalWidth = Math.max(width - 300, 300);
   return (
-    <div className="flex self-center overflow-x-hidden border-2">
+    <div className="flex self-center overflow-x-hidden">
       <ErrorBoundary
         fallback={<p>⚠️ Something went wrong while loading fixture</p>}
       >
