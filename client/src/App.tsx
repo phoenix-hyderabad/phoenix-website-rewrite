@@ -25,10 +25,10 @@ const App = () => {
       >
         <AuthProvider>
           <BrowserRouter>
-            <Navbar />
+            {/* <Navbar /> */}
             <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/home" element={<Home />} />
+              <Route path="/" element={<Robowars />} />
+              {/* <Route path="/home" element={<Home />} />
               <Route path="/robowars" element={<Robowars />} />
               <Route path="/resources" element={<Resources />} />
               <Route path="/projects" element={<Projects />} />
@@ -36,7 +36,7 @@ const App = () => {
               <Route path="/about-us" element={<AboutUs />} />
               <Route path="/livewire" element={<LiveWire />} />
               <Route path="/login" element={<Login />} />
-              <Route path="*" element={<NotFoundPage />} />
+              <Route path="*" element={<NotFoundPage />} /> */}
             </Routes>
             <Footer />
             <Toaster />
