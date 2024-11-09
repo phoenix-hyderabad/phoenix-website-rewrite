@@ -32,7 +32,7 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
           resultText: "",
           isWinner: false,
           status: "",
-          name: "Orcur",
+          name: "Orcus",
         },
         {
           id: "thriveforce",

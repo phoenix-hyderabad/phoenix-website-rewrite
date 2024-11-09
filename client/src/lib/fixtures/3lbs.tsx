@@ -15,7 +15,7 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
           resultText: "",
           isWinner: true,
           status: "WALK_OVER",
-          name: "Hore",
+          name: "Hori",
         },
       ],
     },
