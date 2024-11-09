@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import z from "zod";
 import dataDoublePlayoffs from "@/lib/bracket_data";
 import data8kg from "@/lib/fixtures/8kg";
+import data3lb from "@/lib/fixtures/3lbs";
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
 import StyledTabTrigger from "@/components/aboutus_page/StyledTabTrigger";
 import FixtureContent from "@/components/robowars_page/fixtures";
@@ -145,10 +146,10 @@ const Robowars = () => {
             <FixtureContent playoffData={dataDoublePlayoffs} />
           </TabsContent>
           <TabsContent value="3" className="m-0 flex flex-col">
-            <FixtureContent playoffData={data8kg} />
+            <FixtureContent playoffData={data3lb} />
           </TabsContent>
           <TabsContent value="8" className="m-0 flex flex-col">
-            <FixtureContent playoffData={dataDoublePlayoffs} />
+            <FixtureContent playoffData={data8kg} />
           </TabsContent>
         </Tabs>
 

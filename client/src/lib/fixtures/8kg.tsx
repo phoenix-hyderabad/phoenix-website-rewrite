@@ -187,13 +187,24 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
       state: "WALK_OVER",
       participants: [
         // change to loser of match 1
-        // {
-        //   id: "byte",
-        //   resultText: "",
-        //   isWinner: true,
-        //   status: "WALK_OVER",
-        //   name: "Byte",
-        // },
+        {
+          id: "TBD",
+          resultText: "",
+          isWinner: true,
+          status: "WALK_OVER",
+          name: "TBD",
+        },
+      ],
+    },
+    {
+      id: "-1919",
+      name: "-",
+      nextMatchId: "-1344",
+      nextLooserMatchId: null,
+      startTime: null,
+      state: "WALK_OVER",
+      participants: [
+        // leave blank
       ],
     },
     {
@@ -230,13 +241,13 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
       state: "WALK_OVER",
       participants: [
         // change to loser of match 3
-        // {
-        //   id: "byte",
-        //   resultText: "",
-        //   isWinner: true,
-        //   status: "WALK_OVER",
-        //   name: "Byte",
-        // },
+        {
+          id: "TBD",
+          resultText: "",
+          isWinner: true,
+          status: "WALK_OVER",
+          name: "TBD",
+        },
       ],
     },
     {
