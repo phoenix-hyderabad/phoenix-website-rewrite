@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import z from "zod";
 import data8kg from "@/lib/fixtures/8kg";
 import data3lb from "@/lib/fixtures/3lbs";
-import data15kg from "@/lib/fixtures/3lbs";
+import data15kg from "@/lib/fixtures/15kg";
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
 import StyledTabTrigger from "@/components/aboutus_page/StyledTabTrigger";
 import FixtureContent from "@/components/robowars_page/fixtures";
