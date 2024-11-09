@@ -53,15 +53,15 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
       participants: [
         {
           id: "sniper",
-          resultText: "",
+          resultText: "LOST",
           isWinner: false,
           status: "",
           name: "Sniper",
         },
         {
           id: "wartex",
-          resultText: "",
-          isWinner: false,
+          resultText: "WON",
+          isWinner: true,
           status: "",
           name: "Wartex",
         },
@@ -124,13 +124,13 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
       startTime: null,
       state: "",
       participants: [
-        //   {
-        //     id: "orcus",
-        //     resultText: "",
-        //     isWinner: false,
-        //     status: "", // change to PLAYED
-        //     name: "Orcus",
-        //   },
+          {
+            id: "wartex",
+            resultText: "",
+            isWinner: false,
+            status: "", // change to PLAYED
+            name: "Wartex",
+          },
         //change to winner of match 2 and 3
         //   {
         //     id: "byte",
