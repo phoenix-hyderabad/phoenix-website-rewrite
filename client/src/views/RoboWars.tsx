@@ -83,22 +83,19 @@ const Robowars = () => {
             WARS
           </div>
         </div>
-        {isLoading ? (
-          <LoadingSpinner className="h-8 w-8 self-center text-black" />
-        ) : (
+        
           <>
             <iframe
               width="560"
               height="315"
               src={
-                link ??
                 //"https://www.youtube.com/embed/live_stream?channel=UCnzm_iVbuXd7YJJrSqMspCg"
                 "https://www.youtube.com/embed/R-idpzlkj04?si=7oiTYMMtL6UJWeQT"
               }
               title="YouTube video player"
               className="self-center border-none"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
+              referrerPolicy="no-referrer"
               allowFullScreen
             ></iframe>
 
@@ -137,7 +134,7 @@ const Robowars = () => {
               </Dialog>
             ) : null}
           </>
-        )}
+        
         <div className="py-6" />
         <Tabs defaultValue="about">
           <TabsList className="gap-2 bg-background">
