@@ -3,8 +3,42 @@ import { type MatchType } from "src/components/brackets/types";
 const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
   upper: [
     {
+      id: "-234",
+      name: "walk over",
+      nextMatchId: "2",
+      nextLooserMatchId: null,
+      startTime: null,
+      state: "WALK_OVER",
+      participants: [
+        {
+          id: "wartex",
+          resultText: "",
+          isWinner: true,
+          status: "WALK_OVER",
+          name: "Wartex",
+        },
+      ],
+    },
+    {
+      id: "-2344",
+      name: "walk over",
+      nextMatchId: "2",
+      nextLooserMatchId: null,
+      startTime: null,
+      state: "WALK_OVER",
+      participants: [
+        {
+          id: "byte",
+          resultText: "",
+          isWinner: true,
+          status: "WALK_OVER",
+          name: "Byte",
+        },
+      ],
+    },
+    {
       id: "1",
-      name: "1",
+      name: "Match 1",
       nextMatchId: "3",
       nextLooserMatchId: "4",
       startTime: "Sat Nov 09 2024 13:20:00 GMT+0530",
@@ -27,32 +61,25 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
       ],
     },
     {
-      id: "2",
-      name: "2",
-      nextMatchId: "5",
-      nextLooserMatchId: "4",
-      startTime: "Sat Nov 09 2024 13:00:00 GMT+0530",
-      state: "", // change to SCORE_DONE
+      id: "0",
+      name: "walk over",
+      nextMatchId: "3",
+      nextLooserMatchId: null,
+      startTime: "Sat Nov 09 2024 13:20:00 GMT+0530",
+      state: "WALK_OVER",
       participants: [
         {
-          id: "wartex",
-          resultText: "", // can be anything
-          isWinner: false,
-          status: "", // change to PLAYED
-          name: "Wartex",
-        },
-        {
-          id: "byte",
+          id: "orcus",
           resultText: "",
-          isWinner: false,
-          status: "",
-          name: "Byte",
+          isWinner: true,
+          status: "WALK_OVER",
+          name: "Orcus",
         },
       ],
     },
     {
       id: "3",
-      name: "3",
+      name: "Match 3",
       nextMatchId: "5",
       nextLooserMatchId: "6",
       startTime: "Sat Nov 09 2024 17:40:00 GMT+0530",
@@ -73,6 +100,30 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
         //     status: "",
         //     name: "Byte",
         //   },
+      ],
+    },
+    {
+      id: "2",
+      name: "Match 2",
+      nextMatchId: "5",
+      nextLooserMatchId: "4",
+      startTime: "Sat Nov 09 2024 13:00:00 GMT+0530",
+      state: "", // change to SCORE_DONE
+      participants: [
+        {
+          id: "wartex",
+          resultText: "", // can be anything
+          isWinner: false,
+          status: "", // change to PLAYED
+          name: "Wartex",
+        },
+        {
+          id: "byte",
+          resultText: "",
+          isWinner: false,
+          status: "",
+          name: "Byte",
+        },
       ],
     },
     {
@@ -128,6 +179,24 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
   ],
   lower: [
     {
+      id: "-22344",
+      name: "walk over",
+      nextMatchId: "4",
+      nextLooserMatchId: null,
+      startTime: null,
+      state: "WALK_OVER",
+      participants: [
+        // change to loser of match 1
+        // {
+        //   id: "byte",
+        //   resultText: "",
+        //   isWinner: true,
+        //   status: "WALK_OVER",
+        //   name: "Byte",
+        // },
+      ],
+    },
+    {
       id: "4",
       name: "4",
       nextMatchId: "6",
@@ -150,6 +219,24 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
         //     status: "",
         //     name: "Byte",
         //   },
+      ],
+    },
+    {
+      id: "-1344",
+      name: "walk over",
+      nextMatchId: "6",
+      nextLooserMatchId: null,
+      startTime: null,
+      state: "WALK_OVER",
+      participants: [
+        // change to loser of match 3
+        // {
+        //   id: "byte",
+        //   resultText: "",
+        //   isWinner: true,
+        //   status: "WALK_OVER",
+        //   name: "Byte",
+        // },
       ],
     },
     {

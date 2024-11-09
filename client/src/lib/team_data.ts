@@ -262,14 +262,14 @@ const team: TeamProps[] = [
         // },
       ],
       design: [
-        {
-          student: "p1",
-          link: "https://github.com",
-        },
-        {
-          student: "p2 test",
-          link: "",
-        },
+        // {
+        //   student: "p1",
+        //   link: "https://github.com",
+        // },
+        // {
+        //   student: "p2 test",
+        //   link: "",
+        // },
       ],
       it: [
         {

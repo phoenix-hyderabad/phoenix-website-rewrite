@@ -145,7 +145,7 @@ const Robowars = () => {
             <FixtureContent playoffData={dataDoublePlayoffs} />
           </TabsContent>
           <TabsContent value="3" className="m-0 flex flex-col">
-            <FixtureContent playoffData={dataDoublePlayoffs} />
+            <FixtureContent playoffData={data8kg} />
           </TabsContent>
           <TabsContent value="8" className="m-0 flex flex-col">
             <FixtureContent playoffData={dataDoublePlayoffs} />
