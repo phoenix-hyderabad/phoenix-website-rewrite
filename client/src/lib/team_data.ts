@@ -42,18 +42,18 @@ const team: TeamProps[] = [
         designation: "President",
         contact: "9289506096",
         socials: [
-          {
-            site: "github",
-            username: "",
-          },
-          {
-            site: "instagram",
-            username: "",
-          },
-          {
-            site: "linkedin",
-            username: "",
-          },
+          // {
+          //   site: "github",
+          //   username: "",
+          // },
+          // {
+          //   site: "instagram",
+          //   username: "",
+          // },
+          // {
+          //   site: "linkedin",
+          //   username: "",
+          // },
         ],
       },
 
@@ -62,14 +62,14 @@ const team: TeamProps[] = [
         designation: "Secretary",
         contact: "9915882930",
         socials: [
-          {
-            site: "github",
-            username: "",
-          },
-          {
-            site: "facebook",
-            username: "",
-          },
+          // {
+          //   site: "github",
+          //   username: "",
+          // },
+          // {
+          //   site: "facebook",
+          //   username: "",
+          // },
         ],
       },
 
@@ -110,156 +110,156 @@ const team: TeamProps[] = [
     ],
     members: {
       tech: [
-        {
-          student: "p1",
-          link: "https://github.com",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
-        {
-          student: "member",
-          link: "",
-        },
+        // {
+        //   student: "p1",
+        //   link: "https://github.com",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
+        // {
+        //   student: "member",
+        //   link: "",
+        // },
       ],
       editorial: [
-        {
-          student: "p1",
-          link: "https://github.com",
-        },
-        {
-          student: "pp",
-          link: "",
-        },
+        // {
+        //   student: "",
+        //   link: "",
+        // },
+        // {
+        //   student: "",
+        //   link: "",
+        // },
       ],
       design: [
         {
@@ -319,10 +319,10 @@ const team: TeamProps[] = [
       },
     ],
     members: {
-      tech: ["p1", "p2", "p3"],
-      editorial: ["p1", "p2", "p3"],
-      design: ["p1", "p2", "p3"],
-      it: ["p1", "p2", "p3"],
+      tech: [],
+      editorial: [],
+      design: [],
+      it: [],
     },
   },
 ];

@@ -18,6 +18,7 @@ export default tseslint.config(
       prettierConfig,
     ],
     files: ["**/*.{ts,tsx}"],
+    ignores: ["src/components/brackets/**/*.{ts,tsx}"],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,

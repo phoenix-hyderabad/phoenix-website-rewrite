@@ -15,6 +15,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 import z from "zod";
+import dataDoublePlayoffs from "@/lib/bracket_data";
+import data8kg from "@/lib/fixtures/8kg";
+import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
+import StyledTabTrigger from "@/components/aboutus_page/StyledTabTrigger";
+import FixtureContent from "@/components/robowars_page/fixtures";
 
 const urlSchema = z.object({
   newUrl: z
@@ -70,7 +75,7 @@ const Robowars = () => {
 
   return (
     <div className="flex flex-1 flex-col bg-[#EC2023] px-2 pb-2 text-center">
-      <div className="flex w-full max-w-6xl flex-col self-center">
+      <div className="flex w-full flex-col self-center overflow-x-hidden">
         <div className="relative flex flex-col text-center">
           <h1 className="relative font-atom text-[10rem] text-black">ROBO</h1>
           <div className="absolute left-0 top-0 flex h-full w-full -rotate-12 items-center justify-center font-miyoshi text-8xl text-[#EC2023] [text-shadow:_-1px_1px_0_#000,1px_1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000]">
@@ -128,6 +133,26 @@ const Robowars = () => {
             ) : null}
           </>
         )}
+        <div className="py-6" />
+        <Tabs defaultValue="about">
+          <TabsList className="gap-2 bg-background">
+            <StyledTabTrigger value="15">15 Kg</StyledTabTrigger>
+            <StyledTabTrigger value="3">3 Lbs</StyledTabTrigger>
+            <StyledTabTrigger value="8">8 Kg</StyledTabTrigger>
+          </TabsList>
+          <div className="py-3" />
+          <TabsContent value="15" className="m-0 flex flex-col">
+            <FixtureContent playoffData={dataDoublePlayoffs} />
+          </TabsContent>
+          <TabsContent value="3" className="m-0 flex flex-col">
+            <FixtureContent playoffData={dataDoublePlayoffs} />
+          </TabsContent>
+          <TabsContent value="8" className="m-0 flex flex-col">
+            <FixtureContent playoffData={dataDoublePlayoffs} />
+          </TabsContent>
+        </Tabs>
+
+        <div className="py-4" />
       </div>
     </div>
   );
