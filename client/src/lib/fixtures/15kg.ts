@@ -227,13 +227,13 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
             name: "Orcus",
           },
         //change to losers of match 2 and 3
-        //   {
-        //     id: "byte",
-        //     resultText: "",
-        //     isWinner: false,
-        //     status: "",
-        //     name: "Byte",
-        //   },
+          {
+            id: "sniper",
+            resultText: "",
+            isWinner: false,
+            status: "",
+            name: "Sniper",
+          },
       ],
     },
     {
