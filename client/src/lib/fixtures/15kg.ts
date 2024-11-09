@@ -77,8 +77,8 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
       participants: [
         {
           id: "blackdiamond",
-          resultText: "",
-          isWinner: false,
+          resultText: "WON",
+          isWinner: true,
           status: "",
           name: "Black Diamond",
         },
@@ -86,7 +86,7 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
           id: "fatboy",
           resultText: "",
           isWinner: false,
-          status: "",
+          status: "LOST",
           name: "Fat Boy",
         },
       ],
@@ -131,14 +131,14 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
             status: "", // change to PLAYED
             name: "Wartex",
           },
-        //change to winner of match 2 and 3
-        //   {
-        //     id: "byte",
-        //     resultText: "",
-        //     isWinner: false,
-        //     status: "",
-        //     name: "Byte",
-        //   },
+        
+          {
+            id: "blackdiamond",
+            resultText: "",
+            isWinner: false,
+            status: "",
+            name: "Black Diamond",
+          },
       ],
     },
     {
@@ -201,13 +201,12 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
       startTime: null,
       state: "NO_SHOW",
       participants: [
-        // change to loser of match 1
         {
-          id: "TBD",
+          id: "fatboy",
           resultText: "",
           isWinner: false,
           status: "",
-          name: "TBD",
+          name: "Fat Boy",
         },
       ],
     },
@@ -269,14 +268,14 @@ const dataDoublePlayoffs: { upper: MatchType[]; lower: MatchType[] } = {
       startTime: null,
       state: "",
       participants: [
-        //   {
-        //     id: "orcus",
-        //     resultText: "",
-        //     isWinner: false,
-        //     status: "", // change to PLAYED
-        //     name: "Orcus",
-        //   },
-        //change to losers of match 1 and 5
+          {
+            id: "fatboy",
+            resultText: "",
+            isWinner: false,
+            status: "", // change to PLAYED
+            name: "Fat Boy",
+          },
+        //change to loser of match 5
         //   {
         //     id: "byte",
         //     resultText: "",
