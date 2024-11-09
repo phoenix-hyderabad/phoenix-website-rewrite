@@ -1,26 +1,62 @@
-const AboutTabContent = () => {
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Cpu, Palette, PenTool, Wifi } from "lucide-react";
+
+function AboutTabContent() {
   return (
-    <>
-      <h2 className="p-4 text-center text-5xl font-bold text-accent-foreground">
+    <div className="container mx-auto px-4 py-8">
+      <h2 className="mb-8 text-center text-5xl font-bold text-accent-foreground">
         PHoEnix
       </h2>
-      <p className="text-base">
-        There is no strife, no prejudice, no national conflict in outer space as
-        yet. Its hazards are hostile to us all. Its conquest deserves the best
-        of all mankind, and its opportunity for peaceful cooperation many never
-        come again. But why, some say, the moon? Why choose this as our goal?
-        And they may well ask why climb the highest mountain? Why, 35 years ago,
-        fly the Atlantic? Why does Rice play Texas?
-        <br />
-        We choose to go to the moon. We choose to go to the moon in this decade
-        and do the other things, not because they are easy, but because they are
-        hard, because that goal will serve to organize and measure the best of
-        our energies and skills, because that challenge is one that we are
-        willing to accept, one we are unwilling to postpone, and one which we
-        intend to win, and the others, too.
+      <p className="mb-8 text-center text-lg text-muted-foreground">
+        The PHoEnix Association consists of 4 teams: Technical, Design, IT
+        (Information Technology) and Editorial.
       </p>
-    </>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <TeamCard
+          title="Technical"
+          icon={<Cpu className="h-6 w-6" />}
+          description="Involved in the implementation and upkeep of projects, details of which are given to all Association members at the beginning of each academic year."
+        />
+        <TeamCard
+          title="IT"
+          icon={<Wifi className="h-6 w-6" />}
+          description="Maintains and updates the website, engages in state-of-the-art programming and software for competitions and technical team projects."
+        />
+        <TeamCard
+          title="Design"
+          icon={<Palette className="h-6 w-6" />}
+          description="Responsible for the design and creativity behind every poster for events, workshops, and competitions. Also designs merchandise for various association events."
+        />
+        <TeamCard
+          title="Editorial"
+          icon={<PenTool className="h-6 w-6" />}
+          description="Publishes the annual magazine 'Livewire' and newsletters for the EEE Department. Handles documentation and records of Association events."
+        />
+      </div>
+    </div>
   );
-};
+}
+
+interface TeamCardProps {
+  title: string;
+  icon: React.ReactNode;
+  description: string;
+}
+function TeamCard({ title, icon, description }:TeamCardProps) {
+  return (
+    <Card className="flex flex-col">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+          {icon}
+          {title}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="flex-grow">
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default AboutTabContent;
+

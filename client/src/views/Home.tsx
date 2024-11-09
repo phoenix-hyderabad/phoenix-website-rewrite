@@ -140,7 +140,7 @@ function Home() {
 
   return (
     <div className="mx-auto flex max-w-6xl flex-1 flex-col items-center gap-8 px-8 text-center">
-      <section id="about" className="relative w-full py-12 shadow-xl">
+      <section id="about" className="relative w-full py-12">
         {/*<img src={img1} alt="About" className="h-full w-full object-cover absolute mix-blend-overlay" />*/}
         <div className="flex items-center gap-4 overflow-hidden text-left">
           <div className="flex flex-1 flex-col gap-4 py-24 max-md:items-center max-md:text-center md:pl-4">
@@ -149,9 +149,11 @@ function Home() {
             </h1>
             <h2 className="text-4xl font-bold">PHoEnix</h2>
             <p className="font-sans text-lg">
-              Phoenix Technical Association is a dynamic and student-driven
-              organization that stands as a testament to the vibrant spirit of
-              innovation and collaboration within our academic community.
+              The PHoEnix Technical Association at BITS Pilani Hyderabad fosters
+              innovation and collaboration among students from the Electronics
+              and Engineering branches. Through projects, competitions, and
+              mentorship, we create a dynamic learning environment while
+              bridging students and faculty.
             </p>
           </div>
           <div
@@ -242,7 +244,7 @@ function Home() {
       </section>
 
       {/* Projects */}
-      <section
+      {/* <section
         id="projects"
         className="flex w-full flex-col justify-center gap-8 py-12 lg:flex-row"
       >
@@ -272,7 +274,7 @@ function Home() {
             })}
           </div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 }
