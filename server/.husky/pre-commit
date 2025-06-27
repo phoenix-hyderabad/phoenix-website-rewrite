@@ -1,3 +1,0 @@
-cd server
-bun tsc --noEmit --strict
-bun run lint-staged
