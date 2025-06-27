@@ -25,8 +25,8 @@ const links = [
     link: "/aboutus",
   },
   {
-    title: "Events",
-    link: "/events",
+    title: "Projects",
+    link: "/projects",
   },
   {
     title: "Resources",
