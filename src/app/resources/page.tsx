@@ -136,7 +136,7 @@ const resources = [
   },
   {
     title: "3-1 Resources",
-    description: "Contains ADVD, Comm Sys, opti, DSP, EMFME",
+    description: "Contains ADVD, Comm Sys, opti, DSP, EMFME, EIIT, TMT",
     subjects: [
       {
         name: "ADVD",
@@ -158,11 +158,19 @@ const resources = [
         name: "EMFME",
         link: "https://drive.google.com/drive/folders/1T-U4uf8TTNt_9zoBZwXu-cERgw7fSXs1?usp=drive_link",
       },
+      {
+        name: "EIIT",
+        link: "https://drive.google.com/drive/folders/1J9m108bZ36NNXsyBp05G0FvTaBXRg7oB?usp=drive_link",
+      },
+      {
+        name: "TMT",
+        link: "https://drive.google.com/drive/folders/18yGutE0QfJ5HfasFsqX0RoKQMlBX61DD?usp=drive_link",
+      },
     ],
   },
   {
     title: "3-2 Resources",
-    description: "Contains AE, PE, PS",
+    description: "Contains AE, PE, PS, IIC, CommNet",
     subjects: [
       {
         name: "Power System",
@@ -173,8 +181,16 @@ const resources = [
         link: "https://drive.google.com/drive/folders/1D01wsckWPI5s5CTihYscyRgzBNiAIO9y?usp=drive_link",
       },
       {
-        name: "Analog ELctronics",
+        name: "Analog Electronics",
         link: "https://drive.google.com/drive/folders/1tTkqu_SQNm1D9f77SyOFVRmQ2npz9Bvf?usp=drive_link",
+      },
+      {
+        name: "IIC",
+        link: "https://drive.google.com/drive/folders/1CVLanR3wPNZaR3uYyXFgsQvXHHWTN2PI?usp=drive_link",
+      },
+      {
+        name: "Communication Networks",
+        link: "https://drive.google.com/drive/folders/1eYBwngDMHCy2wpHwAWD887rpZbgw4TB6?usp=drive_link",
       },
     ],
   },
@@ -215,8 +231,16 @@ const resources = [
         link: "https://drive.google.com/drive/folders/1-UWVJ0M3TqvgYKqFeZ84BB8kBnnJs-6f?usp=drive_link",
       },
       {
+        name: "Embedded System Design",
+        link: "https://drive.google.com/drive/folders/1ivTnjms12LY4pDO03i9Y5e3lGTm98OrQ?usp=drive_link",
+      },
+      {
         name: "FDSA",
         link: "https://drive.google.com/drive/folders/1-tBLWCnHNY41yTeZVp0SxsKeY4bVO80D?usp=drive_link",
+      },
+      {
+        name: "Intro to MEMS",
+        link: "https://drive.google.com/drive/folders/1gp4abQSI1Mwu9UiAQecSJ_AjAaw90A-Z?usp=drive_link",
       },
       {
         name: "Linguistics",
