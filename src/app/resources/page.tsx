@@ -136,7 +136,7 @@ const resources = [
   },
   {
     title: "3-1 Resources",
-    description: "Contains ADVD, Comm Sys, opti, DSP, EMFME",
+    description: "Contains ADVD, Comm Sys, opti, DSP, EMFME, EIIT, TMT",
     subjects: [
       {
         name: "ADVD",
@@ -170,7 +170,7 @@ const resources = [
   },
   {
     title: "3-2 Resources",
-    description: "Contains AE, PE, PS",
+    description: "Contains AE, PE, PS, IIC, CommNet",
     subjects: [
       {
         name: "Power System",
