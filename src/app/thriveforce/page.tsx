@@ -114,7 +114,7 @@ const Thriveforce = () => {
               <p className="text-xl font-semibold mt-2">2<sup>nd</sup> Place </p>
             </div>
             <div className="bg-gray-800/70 p-6 rounded-lg border border-gray-700">
-              <h3 className="text-2xl font-bold uppercase mb-2">IIT D [cite: 43]</h3>
+              <h3 className="text-2xl font-bold uppercase mb-2">IIT D</h3>
               <p className="text-xl font-semibold mt-2">1<sup>st</sup> Place </p>
             </div>
           </div>
