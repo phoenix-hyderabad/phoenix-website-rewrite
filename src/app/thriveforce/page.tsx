@@ -45,7 +45,7 @@ const Thriveforce = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground">
-              Thriveforce is PHoEnix's premier combat robotics team, specializing in 
+              Thriveforce is PHoEnix&apos;s premier combat robotics team, specializing in 
               building powerful and strategic robots for competitive combat events.
             </p>
             <p className="text-muted-foreground">
@@ -187,9 +187,9 @@ const Thriveforce = () => {
         <Card className="bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-950/10 dark:to-orange-950/10">
           <CardContent className="p-8">
             <blockquote className="text-lg italic text-muted-foreground">
-              "In the arena of combat robotics, we don't just build machines - we craft 
+              &ldquo;In the arena of combat robotics, we don&apos;t just build machines - we craft 
               warriors. Every bolt tightened, every circuit designed, and every strategy 
-              planned reflects our unwavering commitment to excellence and innovation."
+              planned reflects our unwavering commitment to excellence and innovation.&rdquo;
             </blockquote>
             <p className="mt-4 font-semibold">- Team Thriveforce</p>
           </CardContent>
@@ -205,9 +205,9 @@ const Thriveforce = () => {
               Are you ready to enter the world of combat robotics?
             </p>
             <p className="text-muted-foreground">
-              Join PHoEnix and become part of the Thriveforce legacy. Whether you're 
+              Join PHoEnix and become part of the Thriveforce legacy. Whether you&apos;re 
               interested in mechanical design, electronics, programming, or strategy, 
-              there's a place for you in our combat robotics team.
+              there&apos;s a place for you in our combat robotics team.
             </p>
             <div className="flex flex-wrap justify-center gap-2 mt-4">
               <span className="px-2 py-1 bg-muted rounded text-sm">Mechanical Design</span>
