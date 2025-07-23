@@ -65,7 +65,7 @@ const Thriveforce = () => {
                     alt="1.3KG BUGAWHO Robot 3D Model"
                     width={300}
                     height={200}
-                    className="w-full h-48 object-cover rounded mb-4"
+                    className="w-full h-48 object-contain rounded mb-4"
                   />
                 </div>
               </div>
@@ -79,7 +79,7 @@ const Thriveforce = () => {
                     alt="1.3KG BUGAWHO Real Robot"
                     width={200}
                     height={150}
-                    className="w-full h-32 object-cover rounded"
+                    className="w-full h-32 object-contain rounded"
                   />
                 </div>
               </div>
@@ -95,7 +95,7 @@ const Thriveforce = () => {
                     alt="15KG SLIPKNUT Robot 3D Model"
                     width={300}
                     height={200}
-                    className="w-full h-48 object-cover rounded mb-4"
+                    className="w-full h-48 object-contain rounded mb-4"
                   />
                 </div>
               </div>
@@ -109,7 +109,7 @@ const Thriveforce = () => {
                     alt="15KG SLIPKNUT Real Robot"
                     width={200}
                     height={150}
-                    className="w-full h-32 object-cover rounded"
+                    className="w-full h-32 object-contain rounded"
                   />
                 </div>
               </div>
@@ -125,7 +125,7 @@ const Thriveforce = () => {
                     alt="1.3KG MNM Robot 3D Model"
                     width={300}
                     height={200}
-                    className="w-full h-48 object-cover rounded mb-4"
+                    className="w-full h-48 object-contain rounded mb-4"
                   />
                 </div>
               </div>
@@ -139,7 +139,7 @@ const Thriveforce = () => {
                     alt="1.3KG MNM Real Robot"
                     width={200}
                     height={150}
-                    className="w-full h-32 object-cover rounded"
+                    className="w-full h-32 object-contain rounded"
                   />
                 </div>
               </div>
@@ -165,7 +165,7 @@ const Thriveforce = () => {
                   alt="Future Robot Design 1"
                   width={300}
                   height={240}
-                  className="w-full h-60 object-cover rounded"
+                  className="w-full h-60 object-contain rounded"
                 />
               </div>
             </div>
@@ -179,7 +179,7 @@ const Thriveforce = () => {
                   alt="Future Robot Design 2"
                   width={300}
                   height={240}
-                  className="w-full h-60 object-cover rounded"
+                  className="w-full h-60 object-contain rounded"
                 />
               </div>
             </div>
@@ -193,7 +193,7 @@ const Thriveforce = () => {
                   alt="Future Robot Design 3"
                   width={300}
                   height={240}
-                  className="w-full h-60 object-cover rounded"
+                  className="w-full h-60 object-contain rounded"
                 />
               </div>
             </div>
