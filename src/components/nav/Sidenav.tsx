@@ -80,9 +80,7 @@ const Sidenav = () => {
         <nav className="flex flex-col gap-2">
           <Link href="resources">Resources</Link>
           <Link href="projects">Projects</Link>
-          <Link href="https://drive.google.com/file/d/1P5ADJ4ycYUwZPm9PwafI2eDr0bUo0Aia/view?usp=sharing">
-            Thriveforce
-          </Link>
+          <Link href="thriveforce">Thriveforce</Link>
           <Link href="inductions">Inductions</Link>
           <Link href="aboutus">About us</Link>
         </nav>
