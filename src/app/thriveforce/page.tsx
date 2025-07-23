@@ -30,15 +30,15 @@ const Thriveforce = () => {
               </div>
             </div>
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full blur-3xl opacity-30"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-orange-500 rounded-full blur-3xl opacity-40 animate-pulse"></div>
               <div className="relative z-10 flex justify-center">
-                <div className="w-80 h-80 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
+                <div className="w-96 h-96 flex items-center justify-center">
                   <Image
-                    src="/phoenix-logo.svg"
-                    alt="Thriveforce Dragon Logo"
-                    width={200}
-                    height={200}
-                    className="object-contain filter brightness-0"
+                    src="/thriveforce/logo.png"
+                    alt="Thriveforce Snake Logo"
+                    width={400}
+                    height={400}
+                    className="object-contain animate-breathing"
                   />
                 </div>
               </div>
