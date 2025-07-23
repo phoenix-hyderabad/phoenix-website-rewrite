@@ -35,12 +35,7 @@ const Navbar = () => {
             <Link href="projects">Projects</Link>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Link
-              href="https://drive.google.com/file/d/1P5ADJ4ycYUwZPm9PwafI2eDr0bUo0Aia/view?usp=sharing"
-              target="_blank"
-            >
-              Thriveforce
-            </Link>
+            <Link href="thriveforce">Thriveforce</Link>
           </NavigationMenuItem>
           <NavigationMenuItem>
             <Link href="inductions">Inductions</Link>
