@@ -61,8 +61,8 @@ const Thriveforce = () => {
                 <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-orange-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="relative bg-gray-900/50 p-8 rounded-lg border border-gray-800">
                   <Image
-                    src="https://phoenix-bphc.vercel.app/linefol/thriveforceimg.jpg"
-                    alt="1.3KG BUGAWHO Robot"
+                    src="/thriveforce/bugawho-3d.png"
+                    alt="1.3KG BUGAWHO Robot 3D Model"
                     width={300}
                     height={200}
                     className="w-full h-48 object-cover rounded mb-4"
@@ -75,8 +75,8 @@ const Thriveforce = () => {
                 </h3>
                 <div className="mt-4 bg-gray-900/50 p-4 rounded border border-gray-800">
                   <Image
-                    src="https://phoenix-bphc.vercel.app/linefol/thriveforceimg.jpg"
-                    alt="1.3KG BUGAWHO Real"
+                    src="/thriveforce/bugawho-real.jpg"
+                    alt="1.3KG BUGAWHO Real Robot"
                     width={200}
                     height={150}
                     className="w-full h-32 object-cover rounded"
@@ -91,8 +91,8 @@ const Thriveforce = () => {
                 <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-orange-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="relative bg-gray-900/50 p-8 rounded-lg border border-gray-800">
                   <Image
-                    src="https://phoenix-bphc.vercel.app/linefol/thriveforceimg.jpg"
-                    alt="15KG SLIPKNUT Robot"
+                    src="/thriveforce/slipknut-3d.png"
+                    alt="15KG SLIPKNUT Robot 3D Model"
                     width={300}
                     height={200}
                     className="w-full h-48 object-cover rounded mb-4"
@@ -105,8 +105,8 @@ const Thriveforce = () => {
                 </h3>
                 <div className="mt-4 bg-gray-900/50 p-4 rounded border border-gray-800">
                   <Image
-                    src="https://phoenix-bphc.vercel.app/linefol/thriveforceimg.jpg"
-                    alt="15KG SLIPKNUT Real"
+                    src="/thriveforce/slipknut-real.jpg"
+                    alt="15KG SLIPKNUT Real Robot"
                     width={200}
                     height={150}
                     className="w-full h-32 object-cover rounded"
@@ -121,8 +121,8 @@ const Thriveforce = () => {
                 <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-orange-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="relative bg-gray-900/50 p-8 rounded-lg border border-gray-800">
                   <Image
-                    src="https://phoenix-bphc.vercel.app/linefol/thriveforceimg.jpg"
-                    alt="1.3KG MNM Robot"
+                    src="/thriveforce/mnm-3d.png"
+                    alt="1.3KG MNM Robot 3D Model"
                     width={300}
                     height={200}
                     className="w-full h-48 object-cover rounded mb-4"
@@ -135,8 +135,8 @@ const Thriveforce = () => {
                 </h3>
                 <div className="mt-4 bg-gray-900/50 p-4 rounded border border-gray-800">
                   <Image
-                    src="https://phoenix-bphc.vercel.app/linefol/thriveforceimg.jpg"
-                    alt="1.3KG MNM Real"
+                    src="/thriveforce/mnm-real.jpg"
+                    alt="1.3KG MNM Real Robot"
                     width={200}
                     height={150}
                     className="w-full h-32 object-cover rounded"
@@ -155,17 +155,17 @@ const Thriveforce = () => {
             FUTURE PLANS
           </h2>
           
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-8 md:grid-cols-3 justify-items-center">
             {/* Future Robot 1 */}
             <div className="relative group">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <div className="relative bg-gray-900/50 p-6 rounded-lg border border-gray-800">
                 <Image
-                  src="https://phoenix-bphc.vercel.app/linefol/thriveforceimg.jpg"
+                  src="/thriveforce/future-1.png"
                   alt="Future Robot Design 1"
-                  width={250}
-                  height={200}
-                  className="w-full h-40 object-cover rounded"
+                  width={300}
+                  height={240}
+                  className="w-full h-60 object-cover rounded"
                 />
               </div>
             </div>
@@ -175,11 +175,11 @@ const Thriveforce = () => {
               <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-blue-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <div className="relative bg-gray-900/50 p-6 rounded-lg border border-gray-800">
                 <Image
-                  src="https://phoenix-bphc.vercel.app/linefol/thriveforceimg.jpg"
+                  src="/thriveforce/future-2.png"
                   alt="Future Robot Design 2"
-                  width={250}
-                  height={200}
-                  className="w-full h-40 object-cover rounded"
+                  width={300}
+                  height={240}
+                  className="w-full h-60 object-cover rounded"
                 />
               </div>
             </div>
@@ -189,25 +189,11 @@ const Thriveforce = () => {
               <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-red-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <div className="relative bg-gray-900/50 p-6 rounded-lg border border-gray-800">
                 <Image
-                  src="https://phoenix-bphc.vercel.app/linefol/thriveforceimg.jpg"
+                  src="/thriveforce/future-3.png"
                   alt="Future Robot Design 3"
-                  width={250}
-                  height={200}
-                  className="w-full h-40 object-cover rounded"
-                />
-              </div>
-            </div>
-
-            {/* Future Robot 4 */}
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-yellow-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <div className="relative bg-gray-900/50 p-6 rounded-lg border border-gray-800">
-                <Image
-                  src="https://phoenix-bphc.vercel.app/linefol/thriveforceimg.jpg"
-                  alt="Future Robot Design 4"
-                  width={250}
-                  height={200}
-                  className="w-full h-40 object-cover rounded"
+                  width={300}
+                  height={240}
+                  className="w-full h-60 object-cover rounded"
                 />
               </div>
             </div>
