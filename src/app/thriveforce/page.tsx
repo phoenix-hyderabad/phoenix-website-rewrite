@@ -96,7 +96,6 @@ const Thriveforce = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-white text-center">
             <div className="bg-gray-800/70 p-6 rounded-lg border border-gray-700">
               <h3 className="text-2xl font-bold uppercase mb-2">Techfest </h3>
-              <p className="text-lg">27th - 29th December, 2023 </p>
               <p className="text-xl font-semibold mt-2">1<sup>st</sup> Place </p>
               <p className="text-lg">Best Design </p>
             </div>
@@ -299,6 +298,10 @@ const Thriveforce = () => {
           </div>
         </div>
       </section>
+      {/* Footnote */}
+      <footer className="w-full py-4 text-center text-gray-500 text-xs">
+        <p>In memoriam 🧁 and 👑</p>
+      </footer>
     </div>
   );
 };
