@@ -42,23 +42,23 @@ import { checkAccessSafe } from "~/lib/auth";
 const HARDCODED_INDUCTIONS = [
   {
     name: "Design Team",
-    url: "https://youtu.be/xvFZjo5PgG0",
+    url: "https://forms.gle/fXjCCs4VA9B4RpeN8",
     isOpen: true,
   },
   {
     name: "Editorial Team", 
-    url: "https://youtu.be/xvFZjo5PgG0",
-    isOpen: false,
+    url: "https://forms.gle/PuBoLHygffzJ6wEz9",
+    isOpen: true,
   },
   {
     name: "IT Team",
-    url: "https://youtu.be/xvFZjo5PgG0", 
+    url: "https://forms.gle/78e69f1oKYPWT91fA", 
     isOpen: true,
   },
   {
     name: "Tech Team",
-    url: "/projects",
-    isOpen: false,
+    url: "https://forms.gle/Rgn72GuswdwPQYsu6",
+    isOpen: true,
   },
 ];
 
