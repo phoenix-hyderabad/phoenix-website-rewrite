@@ -85,72 +85,77 @@ function LiveWire() {
       >
         <div className="flex items-center gap-4 overflow-hidden text-left max-md:flex-col">
           <div className="flex flex-1 flex-col gap-2 py-24 max-md:items-center max-md:text-center md:pl-4">
-            <h2 className="text-4xl font-bold">{livewireEditions[0]!.name}</h2>
-            <p className="text-lg">
-              Check out our latest edition of LiveWire! Dive into the best
-              content curated by our team.
+            <div className="flex items-center gap-2">
+              <h2 className="text-4xl font-extrabold tracking-tight drop-shadow-lg">{livewireEditions[0]!.name}</h2>
+              <span className="ml-2 rounded-full bg-gradient-to-r from-red-800 to-red-500 px-3 py-1 text-xs font-bold text-white shadow-md animate-pulse">Latest Edition</span>
+            </div>
+            <p className="text-lg text-white/80 drop-shadow-sm">
+              {livewireEditions[0]!.description}
             </p>
             <a
               href={livewireEditions[0]!.readNowLink}
               className="hover:cursor-pointer"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              <button className="bg-border flex items-center justify-center rounded-lg px-2 py-2 font-bold text-gray-400 brightness-125 hover:cursor-pointer hover:brightness-150">
-                Read More
+              <button className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-red-800 to-red-500 px-4 py-2 font-bold text-white shadow-lg transition-all duration-200 hover:scale-105 hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-red-600">
+                <span>Read More</span>
+                <svg className="h-4 w-4" fill="none" stroke="white" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
               </button>
             </a>
           </div>
 
           <div className="flex h-full flex-1 select-none items-center justify-center py-24 will-change-transform max-md:py-12">
-            <a href={livewireEditions[0]!.readNowLink}>
+            <a href={livewireEditions[0]!.readNowLink} target="_blank" rel="noopener noreferrer">
               <Image
                 src={livewireEditions[0]!.coverImage}
                 alt="About"
-                className="object-fit hover:brigthness-150 h-full max-w-72 shadow-2xl shadow-indigo-500/50 hover:cursor-pointer"
+                className="object-fit h-full max-w-72 rounded-2xl shadow-2xl shadow-indigo-500/50 transition-transform duration-300 hover:scale-105 hover:shadow-pink-500/40 hover:brightness-110"
               />
             </a>
           </div>
         </div>
       </section>
       <section className="flex flex-col gap-8">
-        <h3 className="text-2xl">Check out our past editions!</h3>
+        <h3 className="text-2xl font-semibold text-white/90">Check out our past editions!</h3>
 
         <Carousel
           className=""
           opts={{
             align: "start",
             loop: true,
+            slidesToScroll: 1,
+            dragFree: true,
           }}
           orientation="horizontal"
         >
-          <CarouselPrevious />
-          <CarouselContent className="max-lg:w-[70dvw] max-md:w-[70dvw]">
+          <CarouselPrevious className="!h-12 !w-12 !absolute !left-0 !top-1/2 !-translate-y-1/2 !-translate-x-20 !bg-gradient-to-r !from-red-800 !to-red-500 !text-white !shadow-lg hover:!scale-110 transition-all duration-200 focus:!ring-2 focus:!ring-red-600 z-20" />
+          <CarouselContent className="max-lg:w-[70dvw] max-md:w-[90vw]">
             {livewireEditions.slice(1).map((edition, index) => (
               <CarouselItem
                 key={index}
-                className="mr-2 basis-1/2 max-lg:basis-1/2 max-md:basis-full"
+                className="mr-2 basis-1/3 max-xl:basis-1/2 max-md:basis-full flex flex-col items-center"
               >
-                <div className="m-2 flex h-1/5 flex-col gap-2 p-2">
-                  <h4 className="text-3xl font-bold">{edition.name}</h4>
-                  <p className="text-lg">{edition.description}</p>
-                  <a className="flex justify-center" href={edition.readNowLink}>
-                    <button className="bg-border flex items-center justify-center rounded-lg px-2 py-2 font-bold text-gray-400 brightness-125 hover:cursor-pointer hover:brightness-150">
-                      Read More
-                    </button>
+                <div className="flex flex-col justify-between items-center w-80 h-[480px] max-w-full rounded-2xl border-2 border-red-900 bg-black/60 backdrop-blur-md shadow-xl p-4 transition-all duration-300 hover:shadow-red-800/40 overflow-visible">
+                  <a href={edition.readNowLink} target="_blank" rel="noopener noreferrer" className="block w-full flex justify-center">
+                    <div className="w-full aspect-[3/4] flex items-center justify-center">
+                      <Image
+                        src={edition.coverImage}
+                        alt={edition.name}
+                        className="object-cover w-full h-full rounded-2xl shadow-2xl transition-transform duration-300 hover:scale-105 hover:shadow-red-700/60 hover:brightness-110"
+                        fill={false}
+                      />
+                    </div>
                   </a>
-                </div>
-                <div className="flex h-full select-none items-center justify-center pb-12 pt-4 will-change-transform">
-                  <a href={edition.readNowLink}>
-                    <Image
-                      src={edition.coverImage}
-                      alt="About"
-                      className="object-fit hover:brigthness-150 h-full max-w-72 shadow-2xl hover:cursor-pointer"
-                    />
-                  </a>
+                  <div className="w-full flex flex-col items-center mt-2 flex-1 justify-between">
+                    <h4 className="text-xl font-bold text-white drop-shadow-md text-center">{edition.name}</h4>
+                    <p className="text-sm text-gray-200 text-center mt-2">{edition.description}</p>
+                  </div>
                 </div>
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselNext />
+          <CarouselNext className="!h-12 !w-12 !absolute !right-0 !top-1/2 !-translate-y-1/2 !translate-x-20 !bg-gradient-to-r !from-red-800 !to-red-500 !text-white !shadow-lg hover:!scale-110 transition-all duration-200 focus:!ring-2 focus:!ring-red-600 z-20" />
         </Carousel>
       </section>
     </div>
