@@ -9,7 +9,8 @@ interface Question {
   text: string;
   image?: string;
   options: string[];
-  correctAnswer?: string;
+  optionsMap: Record<string, string>; // Maps option number to text (e.g., "option1": "a")
+  correctAnswer?: string; // Will be "option1", "option2", etc.
   section?: string;
 }
 
@@ -36,7 +37,7 @@ function QuizAssessment() {
     const domainParam = params.get('domain') ?? 'aptitude';
     const questionsParam = parseInt(params.get('questions') ?? '10');
     const timeParam = parseInt(params.get('time') ?? '30');
-    
+
     setDomain(domainParam.charAt(0).toUpperCase() + domainParam.slice(1));
     setTotalQuestions(questionsParam);
     setTimeRemaining(timeParam * 60);
@@ -48,13 +49,13 @@ function QuizAssessment() {
         const response = await fetch(
           `/api/mock/questions?domain=${domainParam}&questions=${questionsParam}`
         );
-        
+
         if (!response.ok) {
           throw new Error('Failed to fetch questions');
         }
-        
+
         const data = await response.json() as ApiResponse;
-        
+
         if (data.questions && data.questions.length > 0) {
           // Renumber questions from 1 to n
           const renumberedQuestions: Question[] = data.questions.map((q, index) => ({
@@ -63,6 +64,15 @@ function QuizAssessment() {
           }));
           setQuestions(renumberedQuestions);
           setTotalQuestions(renumberedQuestions.length);
+
+          // Log to verify correct answers are loaded
+          console.log('Questions loaded:', renumberedQuestions.length);
+          console.log('Sample question:', {
+            id: renumberedQuestions[0]?.id,
+            text: renumberedQuestions[0]?.text.substring(0, 50) + '...',
+            correctAnswer: renumberedQuestions[0]?.correctAnswer,
+            hasCorrectAnswer: !!renumberedQuestions[0]?.correctAnswer
+          });
         } else {
           setError('No questions found for this domain');
         }
@@ -80,11 +90,55 @@ function QuizAssessment() {
   const handleSubmit = useCallback(() => {
     const answeredCount = Object.keys(selectedAnswers).length;
     if (confirm(`You have answered ${answeredCount} out of ${totalQuestions} questions. Are you sure you want to submit?`)) {
-      console.log('Submitted answers:', selectedAnswers);
-      alert('Test submitted successfully!');
-      window.history.back();
+      // Calculate results
+      let correctAnswers = 0;
+      let incorrectAnswers = 0;
+
+      // Count correct and incorrect answers
+      questions.forEach((question) => {
+        const userSelectedOption = selectedAnswers[question.id]; // e.g., "option2"
+
+        if (userSelectedOption) {
+          // Get the correct answer from DB (e.g., "option2")
+          const correctOption = question.correctAnswer?.trim() ?? '';
+
+          // Compare the option numbers directly
+          if (correctOption && userSelectedOption === correctOption) {
+            correctAnswers++;
+            const userAnswerText = question.optionsMap[userSelectedOption] ?? '';
+            const correctAnswerText = question.optionsMap[correctOption] ?? '';
+            console.log(`Q${question.id}: ✅ Correct! User selected "${userSelectedOption}" (${userAnswerText}) = Correct answer is "${correctOption}" (${correctAnswerText})`);
+          } else if (correctOption) {
+            incorrectAnswers++;
+            const userAnswerText = question.optionsMap[userSelectedOption] ?? '';
+            const correctAnswerText = question.optionsMap[correctOption] ?? '';
+            console.log(`Q${question.id}: ❌ Wrong! User selected "${userSelectedOption}" (${userAnswerText}) ≠ Correct answer is "${correctOption}" (${correctAnswerText})`);
+          }
+        }
+      });
+
+      console.log(`Final Score: ${correctAnswers}/${totalQuestions} (${incorrectAnswers} incorrect)`);
+
+      // Calculate time taken
+      const params = new URLSearchParams(window.location.search);
+      const totalTime = parseInt(params.get('time') ?? '30') * 60;
+      const timeTakenSeconds = totalTime - timeRemaining;
+      const minutes = Math.floor(timeTakenSeconds / 60);
+      const seconds = timeTakenSeconds % 60;
+      const timeTaken = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+      // Navigate to results page with data
+      const resultsParams = new URLSearchParams({
+        total: totalQuestions.toString(),
+        correct: correctAnswers.toString(),
+        incorrect: incorrectAnswers.toString(),
+        time: timeTaken,
+        domain: domain,
+      });
+
+      window.location.href = `/mock/results?${resultsParams.toString()}`;
     }
-  }, [selectedAnswers, totalQuestions]);
+  }, [selectedAnswers, totalQuestions, questions, timeRemaining, domain]);
 
   // Timer countdown
   useEffect(() => {
@@ -237,17 +291,16 @@ function QuizAssessment() {
               <h2 className="text-lg font-semibold">Question:</h2>
               <button
                 onClick={handleFlag}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                  flaggedQuestions.has(currentQuestion)
-                    ? 'bg-purple-500 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${flaggedQuestions.has(currentQuestion)
+                  ? 'bg-purple-500 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
               >
                 <Flag size={18} />
                 Flag/Unflag
               </button>
             </div>
-            
+
             <div className="mb-4">
               <span className="text-lg font-semibold">{currentQuestion} [ 1 Mark ]</span>
             </div>
@@ -258,9 +311,9 @@ function QuizAssessment() {
                   <p className="text-gray-800 text-base leading-relaxed">{currentQ.text}</p>
                   {currentQ.image && (
                     <div className="mt-4 relative w-full max-w-2xl mx-auto">
-                      <Image 
-                        src={currentQ.image} 
-                        alt="Question illustration" 
+                      <Image
+                        src={currentQ.image}
+                        alt="Question illustration"
                         width={800}
                         height={600}
                         className="rounded-lg"
@@ -306,22 +359,25 @@ function QuizAssessment() {
             </div>
 
             <div className="space-y-3">
-              {currentQ?.options.map((option, index) => (
-                <label
-                  key={index}
-                  className="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-colors"
-                >
-                  <input
-                    type="radio"
-                    name="answer"
-                    value={option}
-                    checked={selectedAnswers[currentQuestion] === option}
-                    onChange={(e) => handleAnswerSelect(e.target.value)}
-                    className="w-5 h-5 text-blue-600"
-                  />
-                  <span className="text-gray-800">{option}</span>
-                </label>
-              ))}
+              {currentQ?.options.map((option, index) => {
+                const optionKey = `option${index + 1}`; // "option1", "option2", etc.
+                return (
+                  <label
+                    key={index}
+                    className="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-colors"
+                  >
+                    <input
+                      type="radio"
+                      name="answer"
+                      value={optionKey}
+                      checked={selectedAnswers[currentQuestion] === optionKey}
+                      onChange={(e) => handleAnswerSelect(e.target.value)}
+                      className="w-5 h-5 text-blue-600"
+                    />
+                    <span className="text-gray-800">{option}</span>
+                  </label>
+                );
+              })}
             </div>
 
             <button

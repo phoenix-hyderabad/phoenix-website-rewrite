@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ArrowLeft, Zap, Clock, FileQuestion } from 'lucide-react';
+import { ArrowLeft, Clock, FileQuestion } from 'lucide-react';
 
 function QADomainSelection() {
   const [selectedDomain, setSelectedDomain] = useState<string>('');
@@ -24,16 +24,16 @@ function QADomainSelection() {
       alert('Please select a domain');
       return;
     }
-    
+
     const params = new URLSearchParams({
       domain: selectedDomain,
       questions: numQuestions.toString(),
       time: timeLimit.toString()
     });
-    
+
     window.location.href = `/mock/quiz?${params.toString()}`;
   };
-  
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-800 via-slate-900 to-blue-900 flex flex-col">
       {/* Back Button */}
@@ -64,11 +64,10 @@ function QADomainSelection() {
             <button
               key={domain.id}
               onClick={() => setSelectedDomain(domain.id)}
-              className={`w-full py-6 border-2 rounded-xl text-xl font-semibold transition-all ${
-                selectedDomain === domain.id
+              className={`w-full py-6 border-2 rounded-xl text-xl font-semibold transition-all ${selectedDomain === domain.id
                   ? 'border-red-500 bg-red-500/20 text-white'
                   : 'border-red-500 text-white hover:bg-red-500/10'
-              }`}
+                }`}
             >
               {domain.name}
             </button>
@@ -78,7 +77,7 @@ function QADomainSelection() {
         {/* Filters */}
         <div className="w-full max-w-2xl space-y-6 mb-8">
           <h2 className="text-white text-xl font-semibold mb-4">Assessment Settings:</h2>
-          
+
           {/* Number of Questions */}
           <div className="bg-slate-800/50 border-2 border-slate-700 rounded-xl p-6">
             <div className="flex items-center gap-3 mb-4">
@@ -94,7 +93,7 @@ function QADomainSelection() {
                 value={numQuestions}
                 onChange={(e) => setNumQuestions(Number(e.target.value))}
                 className="flex-1 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
-                style={{accentColor: '#ef4444'}}
+                style={{ accentColor: '#ef4444' }}
               />
               <span className="text-white text-2xl font-bold min-w-[60px] text-center bg-slate-700 px-4 py-2 rounded-lg">
                 {numQuestions}
@@ -117,7 +116,7 @@ function QADomainSelection() {
                 value={timeLimit}
                 onChange={(e) => setTimeLimit(Number(e.target.value))}
                 className="flex-1 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
-                style={{accentColor: '#ef4444'}}
+                style={{ accentColor: '#ef4444' }}
               />
               <span className="text-white text-2xl font-bold min-w-[60px] text-center bg-slate-700 px-4 py-2 rounded-lg">
                 {timeLimit}
@@ -130,11 +129,10 @@ function QADomainSelection() {
         <button
           onClick={handleStartAssessment}
           disabled={!selectedDomain}
-          className={`w-full max-w-2xl py-6 rounded-xl text-xl font-bold transition-all ${
-            selectedDomain
+          className={`w-full max-w-2xl py-6 rounded-xl text-xl font-bold transition-all ${selectedDomain
               ? 'bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/50'
               : 'bg-slate-700 text-slate-500 cursor-not-allowed'
-          }`}
+            }`}
         >
           Start Assessment
         </button>
