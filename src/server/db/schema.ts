@@ -189,3 +189,16 @@ export const projectApplications = createTable("project_applications", {
   skills: text("skills").notNull(),
   additionalInfo: text("additional_info"),
 });
+
+export const mockOA = createTable("mock_oa", {
+  qid: serial("qid").primaryKey(),
+  qtext: text("qtext"),
+  qimage: text("qimage"),
+  type: varchar("type", { length: 20 }),
+  section: varchar("section", { length: 20 }),
+  option1: text("option1"),
+  option2: text("option2"),
+  option3: text("option3"),
+  option4: text("option4"),
+  correctans: text("correctans"),
+});

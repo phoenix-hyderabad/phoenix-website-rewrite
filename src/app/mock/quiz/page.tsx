@@ -2,11 +2,21 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Flag, ChevronLeft, ChevronRight } from 'lucide-react';
+import Image from 'next/image';
 
 interface Question {
   id: number;
   text: string;
+  image?: string;
   options: string[];
+  correctAnswer?: string;
+  section?: string;
+}
+
+interface ApiResponse {
+  questions: Question[];
+  domain: string;
+  count: number;
 }
 
 function QuizAssessment() {
@@ -16,28 +26,11 @@ function QuizAssessment() {
   const [timeRemaining, setTimeRemaining] = useState(30 * 60);
   const [domain, setDomain] = useState('Aptitude');
   const [totalQuestions, setTotalQuestions] = useState(40);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Sample questions - you would load these based on the selected domain
-  const questions: Question[] = Array.from({ length: totalQuestions }, (_, i) => ({
-    id: i + 1,
-    text: i === 0 
-      ? "If in a certain code language, BRAVADO is coded as EZSRFNE, then how will RESPECT be coded in the same code language?"
-      : `Sample question ${i + 1} for ${domain} domain. This would be replaced with actual questions from your database.`,
-    options: i === 0 
-      ? ['XYILVAW', 'JYXLWAW', 'VAWLIVX', 'JYXLWGV']
-      : [`Option A for Q${i + 1}`, `Option B for Q${i + 1}`, `Option C for Q${i + 1}`, `Option D for Q${i + 1}`]
-  }));
-
-  const handleSubmit = useCallback(() => {
-    const answeredCount = Object.keys(selectedAnswers).length;
-    if (confirm(`You have answered ${answeredCount} out of ${totalQuestions} questions. Are you sure you want to submit?`)) {
-      console.log('Submitted answers:', selectedAnswers);
-      alert('Test submitted successfully!');
-      window.history.back();
-    }
-  }, [selectedAnswers, totalQuestions]);
-
-  // Get assessment settings from URL params
+  // Fetch questions from API
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const domainParam = params.get('domain') ?? 'aptitude';
@@ -47,7 +40,51 @@ function QuizAssessment() {
     setDomain(domainParam.charAt(0).toUpperCase() + domainParam.slice(1));
     setTotalQuestions(questionsParam);
     setTimeRemaining(timeParam * 60);
+
+    // Fetch questions from the API
+    const fetchQuestions = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          `/api/mock/questions?domain=${domainParam}&questions=${questionsParam}`
+        );
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch questions');
+        }
+        
+        const data = await response.json() as ApiResponse;
+        
+        if (data.questions && data.questions.length > 0) {
+          // Renumber questions from 1 to n
+          const renumberedQuestions: Question[] = data.questions.map((q, index) => ({
+            ...q,
+            id: index + 1,
+          }));
+          setQuestions(renumberedQuestions);
+          setTotalQuestions(renumberedQuestions.length);
+        } else {
+          setError('No questions found for this domain');
+        }
+      } catch (err) {
+        console.error('Error fetching questions:', err);
+        setError('Failed to load questions. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchQuestions().catch(console.error);
   }, []);
+
+  const handleSubmit = useCallback(() => {
+    const answeredCount = Object.keys(selectedAnswers).length;
+    if (confirm(`You have answered ${answeredCount} out of ${totalQuestions} questions. Are you sure you want to submit?`)) {
+      console.log('Submitted answers:', selectedAnswers);
+      alert('Test submitted successfully!');
+      window.history.back();
+    }
+  }, [selectedAnswers, totalQuestions]);
 
   // Timer countdown
   useEffect(() => {
@@ -123,6 +160,56 @@ function QuizAssessment() {
   const currentQ = questions[currentQuestion - 1];
   const answeredCount = Object.keys(selectedAnswers).length;
 
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-lg text-gray-700">Loading questions...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+        <div className="text-center bg-white p-8 rounded-lg shadow-md max-w-md">
+          <div className="text-red-500 text-5xl mb-4">⚠️</div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Error Loading Questions</h2>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <button
+            onClick={() => window.history.back()}
+            className="px-6 py-3 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Show message if no questions
+  if (questions.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+        <div className="text-center bg-white p-8 rounded-lg shadow-md max-w-md">
+          <div className="text-gray-400 text-5xl mb-4">📝</div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">No Questions Available</h2>
+          <p className="text-gray-600 mb-6">There are no questions available for the selected domain.</p>
+          <button
+            onClick={() => window.history.back()}
+            className="px-6 py-3 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-4">
       {/* Header */}
@@ -167,7 +254,21 @@ function QuizAssessment() {
 
             <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-6 mb-6">
               {currentQ ? (
-                <p className="text-gray-800 text-base leading-relaxed">{currentQ.text}</p>
+                <>
+                  <p className="text-gray-800 text-base leading-relaxed">{currentQ.text}</p>
+                  {currentQ.image && (
+                    <div className="mt-4 relative w-full max-w-2xl mx-auto">
+                      <Image 
+                        src={currentQ.image} 
+                        alt="Question illustration" 
+                        width={800}
+                        height={600}
+                        className="rounded-lg"
+                        style={{ width: '100%', height: 'auto' }}
+                      />
+                    </div>
+                  )}
+                </>
               ) : (
                 <p className="text-gray-800 text-base leading-relaxed">Loading question...</p>
               )}
@@ -205,7 +306,7 @@ function QuizAssessment() {
             </div>
 
             <div className="space-y-3">
-              {currentQ.options.map((option, index) => (
+              {currentQ?.options.map((option, index) => (
                 <label
                   key={index}
                   className="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition-colors"
