@@ -11,22 +11,43 @@ interface Question {
   options: string[];
   optionsMap: Record<string, string>; // Maps option number to text (e.g., "option1": "a")
   correctAnswer?: string; // Will be "option1", "option2", etc.
-  section?: string;
+  section: string;
+}
+
+interface Section {
+  id: string;
+  name: string;
+  timeLimit: number; // in seconds
+  questionRange: {
+    start: number;
+    end: number;
+  };
 }
 
 interface ApiResponse {
   questions: Question[];
   domain: string;
   count: number;
+  sections: Section[];
 }
 
 function QuizAssessment() {
   const [currentQuestion, setCurrentQuestion] = useState(1);
+  const [currentSection, setCurrentSection] = useState<string>('A');
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string>>({});
   const [flaggedQuestions, setFlaggedQuestions] = useState<Set<number>>(new Set());
-  const [timeRemaining, setTimeRemaining] = useState(30 * 60);
+  const [sectionTimers, setSectionTimers] = useState<Record<string, number>>({
+    'A': 30 * 60, // 30 minutes for section A
+    'B': 30 * 60, // 30 minutes for section B
+    'C': 30 * 60, // 30 minutes for section C
+  });
+  const [sections] = useState<Section[]>([
+    { id: 'A', name: 'Aptitude', timeLimit: 30 * 60, questionRange: { start: 1, end: 20 } },
+    { id: 'B', name: 'Programming Basics', timeLimit: 30 * 60, questionRange: { start: 21, end: 40 } },
+    { id: 'C', name: 'Technical', timeLimit: 30 * 60, questionRange: { start: 41, end: 60 } },
+  ]);
   const [domain, setDomain] = useState('Aptitude');
-  const [totalQuestions, setTotalQuestions] = useState(40);
+  const [totalQuestions, setTotalQuestions] = useState(60);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,7 +61,13 @@ function QuizAssessment() {
 
     setDomain(domainParam.charAt(0).toUpperCase() + domainParam.slice(1));
     setTotalQuestions(questionsParam);
-    setTimeRemaining(timeParam * 60);
+    
+    // Initialize section timers based on the time parameter
+    setSectionTimers({
+      'A': timeParam * 60,
+      'B': timeParam * 60,
+      'C': timeParam * 60,
+    });
 
     // Fetch questions from the API
     const fetchQuestions = async () => {
@@ -89,74 +116,117 @@ function QuizAssessment() {
 
   const handleSubmit = useCallback(() => {
     const answeredCount = Object.keys(selectedAnswers).length;
+    const unfinishedSections = sections.filter(section => (sectionTimers[section.id] ?? 0) > 0);
+    
+    if (unfinishedSections.length > 0) {
+      const message = `You still have time remaining in ${unfinishedSections.length} section(s). Are you sure you want to submit?`;
+      if (!confirm(message)) {
+        return;
+      }
+    }
+
     if (confirm(`You have answered ${answeredCount} out of ${totalQuestions} questions. Are you sure you want to submit?`)) {
-      // Calculate results
-      let correctAnswers = 0;
-      let incorrectAnswers = 0;
+      // Calculate results for each section
+      const sectionResults = sections.map(section => {
+        const sectionQuestions = questions.filter(q => 
+          q.id >= section.questionRange.start && 
+          q.id <= section.questionRange.end
+        );
+        
+        let correctAnswers = 0;
+        let incorrectAnswers = 0;
 
-      // Count correct and incorrect answers
-      questions.forEach((question) => {
-        const userSelectedOption = selectedAnswers[question.id]; // e.g., "option2"
-
-        if (userSelectedOption) {
-          // Get the correct answer from DB (e.g., "option2")
-          const correctOption = question.correctAnswer?.trim() ?? '';
-
-          // Compare the option numbers directly
-          if (correctOption && userSelectedOption === correctOption) {
-            correctAnswers++;
-            const userAnswerText = question.optionsMap[userSelectedOption] ?? '';
-            const correctAnswerText = question.optionsMap[correctOption] ?? '';
-            console.log(`Q${question.id}: ✅ Correct! User selected "${userSelectedOption}" (${userAnswerText}) = Correct answer is "${correctOption}" (${correctAnswerText})`);
-          } else if (correctOption) {
-            incorrectAnswers++;
-            const userAnswerText = question.optionsMap[userSelectedOption] ?? '';
-            const correctAnswerText = question.optionsMap[correctOption] ?? '';
-            console.log(`Q${question.id}: ❌ Wrong! User selected "${userSelectedOption}" (${userAnswerText}) ≠ Correct answer is "${correctOption}" (${correctAnswerText})`);
+        sectionQuestions.forEach((question) => {
+          const userSelectedOption = selectedAnswers[question.id];
+          if (userSelectedOption) {
+            const correctOption = question.correctAnswer?.trim() ?? '';
+            if (correctOption && userSelectedOption === correctOption) {
+              correctAnswers++;
+              console.log(`Section ${section.id} - Q${question.id}: ✅ Correct!`);
+            } else if (correctOption) {
+              incorrectAnswers++;
+              console.log(`Section ${section.id} - Q${question.id}: ❌ Wrong!`);
+            }
           }
-        }
+        });
+
+        return {
+          sectionId: section.id,
+          sectionName: section.name,
+          total: sectionQuestions.length,
+          correct: correctAnswers,
+          incorrect: incorrectAnswers,
+          timeSpent: section.timeLimit - (sectionTimers[section.id] ?? 0)
+        };
       });
 
-      console.log(`Final Score: ${correctAnswers}/${totalQuestions} (${incorrectAnswers} incorrect)`);
+      const totalCorrect = sectionResults.reduce((sum, section) => sum + section.correct, 0);
+      const totalIncorrect = sectionResults.reduce((sum, section) => sum + section.incorrect, 0);
+      
+      // Format section times
+      const sectionTimesFormatted = sectionResults.map(section => {
+        const minutes = Math.floor(section.timeSpent / 60);
+        const seconds = section.timeSpent % 60;
+        return `${section.sectionName}=${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      }).join(',');
 
-      // Calculate time taken
-      const params = new URLSearchParams(window.location.search);
-      const totalTime = parseInt(params.get('time') ?? '30') * 60;
-      const timeTakenSeconds = totalTime - timeRemaining;
-      const minutes = Math.floor(timeTakenSeconds / 60);
-      const seconds = timeTakenSeconds % 60;
-      const timeTaken = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
-      // Navigate to results page with data
+      // Navigate to results page with detailed section data
       const resultsParams = new URLSearchParams({
         total: totalQuestions.toString(),
-        correct: correctAnswers.toString(),
-        incorrect: incorrectAnswers.toString(),
-        time: timeTaken,
+        correct: totalCorrect.toString(),
+        incorrect: totalIncorrect.toString(),
+        sections: JSON.stringify(sectionResults),
+        sectionTimes: sectionTimesFormatted,
         domain: domain,
       });
 
       window.location.href = `/mock/results?${resultsParams.toString()}`;
     }
-  }, [selectedAnswers, totalQuestions, questions, timeRemaining, domain]);
+  }, [selectedAnswers, totalQuestions, questions, domain, sections, sectionTimers]);
 
-  // Timer countdown
+  // All sections timer countdown
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeRemaining((prev) => {
-        if (prev <= 1) {
+      setSectionTimers((prev) => {
+        const newTimers = { ...prev };
+        let allExpired = true;
+        
+        // Update all section timers simultaneously
+        sections.forEach(section => {
+          const currentTime = newTimers[section.id] ?? 0;
+          if (currentTime > 0) {
+            newTimers[section.id] = currentTime - 1;
+            allExpired = false;
+          }
+          
+          // If a section timer expires and it's the current section, switch to another section
+          if (currentTime <= 0 && section.id === currentSection) {
+            const nextAvailableSection = sections.find(s => {
+              const sectionTime = newTimers[s.id] ?? 0;
+              return s.id !== currentSection && sectionTime > 0;
+            })?.id;
+            
+            if (nextAvailableSection) {
+              setCurrentSection(nextAvailableSection);
+            }
+          }
+        });
+        
+        // If all timers have expired, submit the quiz
+        if (allExpired) {
           clearInterval(timer);
           handleSubmit();
-          return 0;
         }
-        return prev - 1;
+        
+        return newTimers;
       });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [handleSubmit]);
+  }, [handleSubmit, sections, currentSection]);
 
-  const formatTime = (seconds: number) => {
+  const formatTime = (seconds: number | undefined) => {
+    if (typeof seconds !== 'number') return '00:00';
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
@@ -179,15 +249,37 @@ function QuizAssessment() {
     setFlaggedQuestions(newFlagged);
   };
 
+  const currentSectionData = sections.find(s => s.id === currentSection);
+
   const handleNext = () => {
-    if (currentQuestion < totalQuestions) {
+    if (!currentSectionData) return;
+    
+    if (currentQuestion < currentSectionData.questionRange.end) {
       setCurrentQuestion(currentQuestion + 1);
+    } else {
+      // Try to move to next section
+      const nextSectionIndex = sections.findIndex(s => s.id === currentSection) + 1;
+      const nextSection = sections[nextSectionIndex];
+      if (nextSection) {
+        setCurrentSection(nextSection.id);
+        setCurrentQuestion(nextSection.questionRange.start);
+      }
     }
   };
 
   const handlePrev = () => {
-    if (currentQuestion > 1) {
+    if (!currentSectionData) return;
+    
+    if (currentQuestion > currentSectionData.questionRange.start) {
       setCurrentQuestion(currentQuestion - 1);
+    } else {
+      // Try to move to previous section
+      const prevSectionIndex = sections.findIndex(s => s.id === currentSection) - 1;
+      const prevSection = sections[prevSectionIndex];
+      if (prevSection) {
+        setCurrentSection(prevSection.id);
+        setCurrentQuestion(prevSection.questionRange.end);
+      }
     }
   };
 
@@ -267,18 +359,46 @@ function QuizAssessment() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-4">
       {/* Header */}
-      <div className="bg-white rounded-lg shadow-md p-4 mb-4 flex items-center justify-between">
-        <div>
-          <p className="text-sm text-gray-600">
-            <span className="font-semibold">Groups:</span> {domain}: 1 to 20 | Programming Basics: 21 to 40 | Technical[Computer Science or Electronics or Communication]: 41 to 60
-          </p>
-          <p className="text-sm text-gray-600 mt-1">
-            <span className="font-semibold">Group:</span> {domain} | <span className="font-semibold">Section:</span> Puzzles
-          </p>
+      <div className="bg-white rounded-lg shadow-md p-4 mb-4">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl text-blue-600 font-semibold">Sections</h2>
+          <div className="text-right">
+            <div className="text-2xl font-bold text-red-600">
+              {formatTime(sectionTimers[currentSection])}
+            </div>
+            <div className="text-sm text-gray-600">Current Section Time Remaining</div>
+          </div>
         </div>
-        <div className="text-right">
-          <div className="text-2xl font-bold text-red-600">{formatTime(timeRemaining)}</div>
-          <div className="text-sm text-gray-600">Time Remaining</div>
+        
+        <div className="grid grid-cols-3 gap-4 mb-4">
+          {sections.map((section) => (
+            <button
+              key={section.id}
+              onClick={() => setCurrentSection(section.id)}
+              className={`p-4 rounded-lg transition-colors ${
+                currentSection === section.id
+                  ? 'bg-blue-700 text-white'
+                  : 'bg-blue-500 text-white hover:bg-blue-600'
+              }`}
+            >
+              <div className="font-semibold">{section.name}</div>
+              <div className="text-sm mt-1">
+                Questions {section.questionRange.start}-{section.questionRange.end}
+              </div>
+              <div className="text-sm mt-1">
+                Time: {formatTime(sectionTimers[section.id])}
+              </div>
+            </button>
+          ))}
+        </div>
+        
+        <div className="text-sm text-gray-600">
+          <p>Current Section: <span className="font-semibold">{
+            sections.find(s => s.id === currentSection)?.name
+          }</span></p>
+          <p className="mt-1">
+            Navigate between sections freely. Each section has its own timer.
+          </p>
         </div>
       </div>
 
