@@ -1,0 +1,15 @@
+# Question Selector GUI - Requirements
+# Install with: pip install -r requirements.txt
+
+# Core dependencies
+pymupdf>=1.23.0      # PDF processing (fitz)
+Pillow>=10.0.0       # Image processing
+PyQt5>=5.15.0        # GUI framework
+
+# OCR (optional but recommended)
+pytesseract>=0.3.10  # OCR wrapper
+
+# Note: You also need to install Tesseract OCR on your system:
+# - macOS: brew install tesseract
+# - Ubuntu: sudo apt install tesseract-ocr
+# - Windows: Download from https://github.com/UB-Mannheim/tesseract/wiki
