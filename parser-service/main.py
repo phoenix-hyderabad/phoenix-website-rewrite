@@ -7,7 +7,6 @@ import tempfile
 import pdfplumber
 import concurrent.futures
 from supabase import create_client, Client
-from pydantic import BaseModel
 
 app = FastAPI(title="Phoenix Mock OA Parser Service")
 
