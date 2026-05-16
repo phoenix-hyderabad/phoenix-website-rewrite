@@ -19,15 +19,17 @@ const domainMap: Record<string, string> = {
     'aptitude': 'Electronics Aptitude',
 };
 
-// Regex to find a question block: Starts with Q followed by number and ) or . or :
-// It captures everything until the next Q marker or end of string.
-const QUESTION_BLOCK_REGEX = /(?:^|\n)(Q\s*\d+\s*[)\.:])\s*([\s\S]*?)(?=(?:\nQ\s*\d+\s*[)\.:])|$)/gi;
+// Regex to find a question block. Looks for a double newline (or start of text) followed by
+// an optional 'Q' or 'Question', a number, and a punctuation mark ), ., or -.
+// It gracefully ignores headings and introductory text.
+const QUESTION_BLOCK_REGEX = /(?:^|\n\s*\n)\s*((?:Q(?:uestion)?\s*\.?\s*\d+|\d+)\s*[)\.:-])\s*([\s\S]*?)(?=(?:\n\s*\n\s*(?:Q(?:uestion)?\s*\.?\s*\d+|\d+)\s*[)\.:-])|$)/gi;
 
-// Regex to find options (A) (B) (C) (D)
+// Regexes to find options in various common formats: (A), A), A., [A], (1), 1), 1., [1]
 const OPTIONS_REGEXES = [
-    /\(([A-Da-d])\)\s*(.+?)(?=\([A-Da-d]\)|$)/gs,
-    /([A-Da-d])\)\s*(.+?)(?=[A-Da-d]\)|$)/gs,
-    /([A-Da-d])\.\s*(.+?)(?=[A-Da-d]\.|$)/gs,
+    /(?:^|\s)\(([A-Ea-e1-5])\)\s*(.+?)(?=(?:\s\([A-Ea-e1-5]\))|$)/gs,
+    /(?:^|\s)([A-Ea-e1-5])\)\s*(.+?)(?=(?:\s[A-Ea-e1-5]\))|$)/gs,
+    /(?:^|\s)([A-Ea-e1-5])\.\s*(.+?)(?=(?:\s[A-Ea-e1-5]\.)|$)/gs,
+    /(?:^|\s)\[([A-Ea-e1-5])\]\s*(.+?)(?=(?:\s\[[A-Ea-e1-5]\])|$)/gs,
 ];
 
 function parseOptions(text: string) {
@@ -95,8 +97,8 @@ export async function POST(request: NextRequest) {
 
             // If options were found inside the text, remove them from the main question stem
             if (parsedOptions) {
-                // Split by the first occurrence of an option marker
-                const splitRegex = /\([A-Da-d]\)\s*|\s[A-Da-d]\)\s*|\s[A-Da-d]\.\s*/;
+                // Split by the first occurrence of an option marker (flexible format)
+                const splitRegex = /(?:\n|\s|^)\([A-Ea-e1-5]\)\s*|(?:\n|\s|^)[A-Ea-e1-5]\)\s*|(?:\n|\s|^)[A-Ea-e1-5]\.\s*|(?:\n|\s|^)\[[A-Ea-e1-5]\]\s*/;
                 const cleanTextParts = qText.split(splitRegex);
                 if (cleanTextParts[0] && cleanTextParts[0].trim().length > 5) {
                     qText = cleanTextParts[0].trim();
