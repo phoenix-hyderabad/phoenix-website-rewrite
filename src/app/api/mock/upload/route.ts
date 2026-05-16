@@ -1,14 +1,10 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import * as pdfParseModule from 'pdf-parse';
+import { parsePdfBuffer } from '../../../../lib/pdfParser';
 
-// Handle CommonJS/ESM interop and TS definition mismatches for pdf-parse
-const parsePdf = (pdfParseModule as any).PDFParse || (pdfParseModule as any).default || pdfParseModule;
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-// We need the service role key or publishable key that has insert permissions.
-// The publishable key has an insert policy based on create_table.sql.
-const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
+// Prefer server-only env vars; fall back to NEXT_PUBLIC for compatibility
+const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 const TABLE_NAME = 'phoenix-website_mock_oa';
 
 // Map frontend domain names to database section values
@@ -43,6 +39,23 @@ function parseOptions(text: string) {
             return options;
         }
     }
+    // Fallback: line-based detection for options starting at line beginnings like "A.", "B)", "(A)"
+    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    const optLines: string[] = [];
+    for (const line of lines) {
+        if (/^(?:\(?[A-Ea-e1-5]\)?[\)\.\-\]]|\[[A-Ea-e1-5]\])\s+/.test(line)) {
+            optLines.push(line);
+        }
+    }
+    if (optLines.length >= 2) {
+        const options: Record<string, string> = {};
+        for (let i = 0; i < Math.min(4, optLines.length); i++) {
+            // remove leading label like "A)" or "(A)" or "A." and keep the rest
+            options[`option${i + 1}`] = optLines[i].replace(/^(?:\(?([A-Ea-e1-5])\)?[\)\.\-\]]|\[([A-Ea-e1-5])\])\s*/,'').trim();
+        }
+        return options;
+    }
+
     return null;
 }
 
@@ -59,6 +72,17 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        // Basic validation: enforce PDF mime and size limit to avoid abuse
+        const MAX_BYTES = parseInt(process.env.MAX_PDF_SIZE_BYTES || '10485760'); // 10 MB default
+        const fileType = (file as any).type || '';
+        const fileSize = (file as any).size || 0;
+        if (!fileType.includes('pdf') && !file.name?.toLowerCase?.()?.endsWith('.pdf')) {
+            return NextResponse.json({ error: 'Uploaded file must be a PDF.' }, { status: 400 });
+        }
+        if (fileSize > MAX_BYTES) {
+            return NextResponse.json({ error: `File too large. Max ${MAX_BYTES} bytes allowed.` }, { status: 413 });
+        }
+
         const dbSection = domainMap[domain.toLowerCase()];
         if (!dbSection) {
             return NextResponse.json(
@@ -67,53 +91,39 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // --- MICROSERVICE INTEGRATION ---
-        // If the Python Microservice URL is provided, forward the file to it to handle image extraction.
+        // Microservice URL (used as a fallback if local parsing doesn't produce results)
         const pythonServiceUrl = process.env.PYTHON_PARSER_URL;
-        if (pythonServiceUrl) {
-            try {
-                // We create a new FormData to send to the python service
-                const microserviceFormData = new FormData();
-                microserviceFormData.append('file', file);
-                // Send the exact database section name that the python script expects
-                microserviceFormData.append('domain', dbSection);
 
-                const response = await fetch(pythonServiceUrl, {
-                    method: 'POST',
-                    body: microserviceFormData,
-                });
-
-                const data = await response.json();
-                if (!response.ok) {
-                    throw new Error(data.detail || 'Microservice failed to process the PDF.');
-                }
-
-                return NextResponse.json({
-                    success: true,
-                    message: data.message,
-                    count: data.count
-                });
-            } catch (err: any) {
-                console.error('Python Microservice Error:', err);
-                return NextResponse.json({ error: 'Failed to communicate with the PDF Parsing Microservice.' }, { status: 502 });
-            }
-        }
-        // --------------------------------
-
-        // Convert File to Buffer for pdf-parse (Fallback text-only parsing)
+        // Convert File to Buffer for parsing
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
 
-        // Parse PDF text
-        let pdfData;
+        // Parse PDF text using local parser abstraction
+        let parsed;
         try {
-            pdfData = await parsePdf(buffer);
+            parsed = await parsePdfBuffer(buffer);
         } catch (err) {
             console.error('PDF Parse Error:', err);
+            // If parsing fails and a microservice exists, try delegating
+            if (pythonServiceUrl) {
+                try {
+                    const microserviceFormData = new FormData();
+                    microserviceFormData.append('file', file);
+                    microserviceFormData.append('domain', dbSection);
+                    const response = await fetch(pythonServiceUrl, { method: 'POST', body: microserviceFormData });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.detail || 'Microservice failed');
+                    return NextResponse.json({ success: true, message: data.message, count: data.count });
+                } catch (errMicro: any) {
+                    console.error('Python Microservice Error:', errMicro);
+                    return NextResponse.json({ error: 'Failed to parse PDF (local and microservice).' }, { status: 502 });
+                }
+            }
+
             return NextResponse.json({ error: 'Failed to parse PDF file. Ensure it is a valid PDF.' }, { status: 400 });
         }
 
-        const text = pdfData.text;
+        const text = parsed.text || '';
         
         // Extract questions
         const questionsToInsert: any[] = [];
@@ -154,6 +164,24 @@ export async function POST(request: NextRequest) {
             };
 
             questionsToInsert.push(row);
+        }
+
+        // If no MCQs found locally, attempt microservice fallback (better OCR / image extraction)
+        if (questionsToInsert.length === 0 && pythonServiceUrl) {
+            try {
+                const microserviceFormData = new FormData();
+                microserviceFormData.append('file', file);
+                microserviceFormData.append('domain', dbSection);
+
+                const response = await fetch(pythonServiceUrl, { method: 'POST', body: microserviceFormData });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.detail || 'Microservice failed to process the PDF.');
+
+                return NextResponse.json({ success: true, message: data.message, count: data.count });
+            } catch (err: any) {
+                console.error('Python Microservice Error:', err);
+                return NextResponse.json({ error: 'No questions extracted and microservice fallback failed.' }, { status: 422 });
+            }
         }
 
         if (questionsToInsert.length === 0) {

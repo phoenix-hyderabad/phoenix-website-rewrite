@@ -5,6 +5,7 @@ import re
 import uuid
 import tempfile
 import fitz  # PyMuPDF
+import concurrent.futures
 from supabase import create_client, Client
 from pydantic import BaseModel
 
@@ -134,6 +135,50 @@ def extract_questions_from_pdf(pdf_path: str):
     doc.close()
     return questions
 
+def process_single_question(q, domain, supabase: Client):
+    text = q["text"].strip()
+    if len(text) < 10:
+        return False
+
+    opts = parse_options(text)
+    clean_txt = clean_question_text(text) if opts else text
+    clean_txt = clean_txt.replace("\n", " ").strip()
+    
+    row = {
+        "qtext": clean_txt,
+        "qimage": None,
+        "type": "mcq",
+        "section": domain,
+        "option1": opts["option1"] if opts else None,
+        "option2": opts["option2"] if opts else None,
+        "option3": opts["option3"] if opts else None,
+        "option4": opts["option4"] if opts else None,
+        "correctans": None,
+    }
+
+    # Handle Image Upload
+    if q.get("image_bytes"):
+        filename = f"qimg_{uuid.uuid4().hex}.{q['image_ext']}"
+        try:
+            supabase.storage.from_(BUCKET_NAME).upload(
+                path=filename, 
+                file=q["image_bytes"], 
+                file_options={"content-type": f"image/{q['image_ext']}"}
+            )
+            row["qimage"] = supabase.storage.from_(BUCKET_NAME).get_public_url(filename)
+        except Exception as e:
+            print(f"Image upload error: {e}")
+
+    # Insert to DB
+    try:
+        result = supabase.table(TABLE_NAME).insert(row).execute()
+        if result.data:
+            return True
+    except Exception as e:
+        print(f"Database insert error: {e}")
+        
+    return False
+
 @app.get("/health")
 def health_check():
     return {"status": "ok", "service": "Phoenix PDF Parser"}
@@ -162,44 +207,14 @@ async def parse_and_upload(
         questions = extract_questions_from_pdf(tmp_path)
         
         uploaded_count = 0
-        for q in questions:
-            text = q["text"].strip()
-            if len(text) < 10:
-                continue
-
-            opts = parse_options(text)
-            clean_txt = clean_question_text(text) if opts else text
-            clean_txt = clean_txt.replace("\n", " ").strip()
+        
+        # Concurrently process questions to drastically increase upload speed
+        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+            futures = [executor.submit(process_single_question, q, domain, supabase) for q in questions]
             
-            row = {
-                "qtext": clean_txt,
-                "qimage": None,
-                "type": "mcq",
-                "section": domain,
-                "option1": opts["option1"] if opts else None,
-                "option2": opts["option2"] if opts else None,
-                "option3": opts["option3"] if opts else None,
-                "option4": opts["option4"] if opts else None,
-                "correctans": None,
-            }
-
-            # Handle Image Upload
-            if q.get("image_bytes"):
-                filename = f"qimg_{uuid.uuid4().hex}.{q['image_ext']}"
-                try:
-                    supabase.storage.from_(BUCKET_NAME).upload(
-                        path=filename, 
-                        file=q["image_bytes"], 
-                        file_options={"content-type": f"image/{q['image_ext']}"}
-                    )
-                    row["qimage"] = supabase.storage.from_(BUCKET_NAME).get_public_url(filename)
-                except Exception as e:
-                    print(f"Image upload error: {e}")
-
-            # Insert to DB
-            result = supabase.table(TABLE_NAME).insert(row).execute()
-            if result.data:
-                uploaded_count += 1
+            for future in concurrent.futures.as_completed(futures):
+                if future.result():
+                    uploaded_count += 1
 
         return {
             "success": True,
