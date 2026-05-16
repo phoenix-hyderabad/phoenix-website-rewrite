@@ -67,8 +67,9 @@ async def _ensure_bucket(client: httpx.AsyncClient, url: str, key: str):
         print(f"[warn] bucket setup: {e}")
 
 # ─── Regex patterns ──────────────────────────────────────────────────────────
+# Improved to match various common question starts: 1. 1) 1- 1: Q1. Question 1.
 QUESTION_START_RE = re.compile(
-    r"^\s*(?:Q(?:uestion)?\s*\.?\s*\d+|\(?\d+\)?)[)\\.:-]?\s+(.*)",
+    r"^\s*(?:Q(?:uestion)?\s*\.?\s*\d+|\(?\d+\)?)\s*[).:-]\s+(.*)",
     re.IGNORECASE | re.DOTALL,
 )
 
@@ -149,25 +150,32 @@ async def _upload_img(client: httpx.AsyncClient, url: str, key: str,
     return None
 
 # ─── Async batch DB insert (direct PostgREST REST) ──────────────────────────
-async def _batch_insert(client: httpx.AsyncClient, url: str, key: str,
-                        rows: list[dict]) -> int:
+async def _batch_insert(client: httpx.AsyncClient, url: str, key: str, rows: list[dict]):
+    """Insert rows in chunks using the PostgREST bulk insert API."""
+    if not rows:
+        return 0
+
     headers = {
         "Authorization": f"Bearer {key}",
         "apikey": key,
         "Content-Type": "application/json",
-        "Prefer": "return=minimal",
+        "Prefer": "return=minimal"
     }
+
     inserted = 0
     # Fire all batch chunks concurrently
     async def _do_batch(batch: list[dict]) -> int:
         try:
             r = await client.post(f"{url}/rest/v1/{TABLE_NAME}", json=batch, headers=headers)
-            return len(batch) if r.status_code in (200, 201) else 0
+            if r.status_code not in (200, 201):
+                print(f"[error] batch insert failed ({r.status_code}): {r.text}")
+                return 0
+            return len(batch)
         except Exception as e:
-            print(f"batch insert err: {e}")
+            print(f"[error] batch insert exception: {e}")
             return 0
 
-    batches = [rows[i:i+BATCH_SIZE] for i in range(0, len(rows), BATCH_SIZE)]
+    batches = [rows[i : i + BATCH_SIZE] for i in range(0, len(rows), BATCH_SIZE)]
     results = await asyncio.gather(*[_do_batch(b) for b in batches])
     return sum(results)
 

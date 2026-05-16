@@ -29,6 +29,7 @@ async function tryMicroservice(file: File, dbSection: string): Promise<Response 
     const pythonServiceUrl = process.env.PYTHON_PARSER_URL;
     if (!pythonServiceUrl) return null;
 
+    console.log(`[Upload] Attempting microservice: ${pythonServiceUrl}/parse`);
     try {
         const fd = new FormData();
         fd.append('file', file);
@@ -38,9 +39,16 @@ async function tryMicroservice(file: File, dbSection: string): Promise<Response 
             method: 'POST',
             body: fd,
         });
-        const data = await resp.json();
+        
+        if (!resp.ok) {
+            const errorText = await resp.text();
+            console.warn(`[Upload] Microservice returned error (${resp.status}):`, errorText);
+            return null;
+        }
 
-        if (resp.ok && data.success) {
+        const data = await resp.json();
+        if (data.success) {
+            console.log(`[Upload] Microservice success: ${data.count} questions`);
             return NextResponse.json({
                 success: true,
                 message: data.message,
@@ -48,13 +56,13 @@ async function tryMicroservice(file: File, dbSection: string): Promise<Response 
             }) as unknown as Response;
         }
     } catch (err) {
-        console.warn('Python microservice unavailable, falling back to local parser:', err);
+        console.warn('[Upload] Microservice connection failed, falling back to local parser:', err);
     }
     return null;
 }
 
 // ─── Regex for local fallback parser ────────────────────────────────────────
-const QUESTION_BLOCK_REGEX = /(?:^|\n\s*\n)\s*((?:Q(?:uestion)?\s*\.?\s*\d+|\d+)\s*[)\\.:-])\s*([\s\S]*?)(?=(?:\n\s*\n\s*(?:Q(?:uestion)?\s*\.?\s*\d+|\d+)\s*[)\\.:-])|$)/gi;
+const QUESTION_BLOCK_REGEX = /(?:^|\n\s*\n)\s*((?:Q(?:uestion)?\s*\.?\s*\d+|\d+)\s*[).:-])\s*([\s\S]*?)(?=(?:\n\s*\n\s*(?:Q(?:uestion)?\s*\.?\s*\d+|\d+)\s*[).:-])|$)/gi;
 
 const OPTIONS_REGEXES = [
     /(?:^|\s)\(([A-Ea-e1-5])\)\s*(.+?)(?=(?:\s\([A-Ea-e1-5]\))|$)/gs,
@@ -69,27 +77,31 @@ function parseOptions(text: string) {
         if (matches.length >= 2) {
             const options: Record<string, string> = {};
             for (let i = 0; i < Math.min(4, matches.length); i++) {
-                options[`option${i + 1}`] = matches[i]?.[2]?.trim() || '';
+                const match = matches[i];
+                if (match && match[2]) {
+                    options[`option${i + 1}`] = match[2].trim();
+                }
             }
             return options;
         }
     }
-    // Fallback: line-based detection for options starting at line beginnings like "A.", "B)", "(A)"
     const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
     const optLines: string[] = [];
     for (const line of lines) {
-        if (/^(?:\(?[A-Ea-e1-5]\)?[)\.\-\]]|\[[A-Ea-e1-5]\])\s+/.test(line)) {
+        if (/^(?:\(?[A-Ea-e1-5]\)?[).:-]|\[[A-Ea-e1-5]\])\s+/.test(line)) {
             optLines.push(line);
         }
     }
     if (optLines.length >= 2) {
         const options: Record<string, string> = {};
         for (let i = 0; i < Math.min(4, optLines.length); i++) {
-            options[`option${i + 1}`] = optLines[i].replace(/^(?:\(?([A-Ea-e1-5])\)?[)\.\-\]]|\[([A-Ea-e1-5])\])\s*/,'').trim();
+            const line = optLines[i];
+            if (line) {
+                options[`option${i + 1}`] = line.replace(/^(?:\(?([A-Ea-e1-5])\)?[).:-]|\[([A-Ea-e1-5])\])\s*/,'').trim();
+            }
         }
         return options;
     }
-
     return null;
 }
 
@@ -97,13 +109,14 @@ function parseOptions(text: string) {
 async function localParse(buffer: Buffer, dbSection: string) {
     const parsed = await parsePdfBuffer(buffer);
     const text = parsed.text || '';
+    if (!text.trim()) throw new Error('PDF extracted text is empty');
 
     const questionsToInsert: any[] = [];
     const matches = [...text.matchAll(QUESTION_BLOCK_REGEX)];
 
     for (const match of matches) {
-        let qText = match[2].trim();
-        if (qText.length < 10) continue;
+        let qText = match[2]?.trim();
+        if (!qText || qText.length < 10) continue;
 
         const parsedOptions = parseOptions(qText);
 
@@ -141,13 +154,9 @@ export async function POST(request: NextRequest) {
         const domain = formData.get('domain') as string;
 
         if (!file || !domain) {
-            return NextResponse.json(
-                { error: 'File and domain are required' },
-                { status: 400 }
-            );
+            return NextResponse.json({ error: 'File and domain are required' }, { status: 400 });
         }
 
-        // Basic validation
         const MAX_BYTES = parseInt(process.env.MAX_PDF_SIZE_BYTES || '10485760');
         const fileType = (file as any).type || '';
         const fileSize = (file as any).size || 0;
@@ -163,55 +172,52 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Invalid domain specified' }, { status: 400 });
         }
 
-        // ── FAST PATH: Try the Python microservice first ────────────────────
-        // The Python service uses PyMuPDF (C-based) + fully async httpx with
-        // connection pooling. It handles images and is 5-10x faster than local
-        // pdf-parse + regex.
         const microResult = await tryMicroservice(file, dbSection);
         if (microResult) return microResult;
 
-        // ── FALLBACK: Local pdf-parse + regex (no image support) ────────────
+        console.log('[Upload] Falling back to local parser...');
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
 
         let questionsToInsert: any[];
         try {
             questionsToInsert = await localParse(buffer, dbSection);
-        } catch (err) {
-            console.error('PDF Parse Error:', err);
+        } catch (err: any) {
+            console.error('[Upload] Local PDF Parse Error:', err);
             return NextResponse.json(
-                { error: 'Failed to parse PDF file. Ensure it is a valid PDF.' },
+                { error: `Failed to parse PDF file: ${err.message || 'Unknown error'}. Ensure it is a valid PDF.` },
                 { status: 400 }
             );
         }
 
         if (questionsToInsert.length === 0) {
+            console.warn('[Upload] No questions extracted by local parser');
             return NextResponse.json({
                 error: 'No questions could be extracted from this PDF. Please check the format (e.g. Q1) ... ).'
             }, { status: 400 });
         }
 
-        // Batch insert (single round-trip, no return data)
         const supabase = getSupabase();
-        const { error } = await supabase
+        // Cast to any to avoid strict type mismatch with dynamic table names in TS
+        const { error } = await (supabase
             .from(TABLE_NAME)
-            .insert(questionsToInsert, { count: 'exact' });
+            .insert(questionsToInsert as any, { count: 'exact' }) as any);
 
         if (error) {
-            console.error('Supabase Insert Error:', error);
+            console.error('[Upload] Supabase Insert Error:', error);
             return NextResponse.json({ error: 'Failed to insert questions into database.' }, { status: 500 });
         }
 
         return NextResponse.json({
             success: true,
-            message: `Successfully uploaded ${questionsToInsert.length} questions.`,
+            message: `Successfully uploaded ${questionsToInsert.length} questions (local fallback).`,
             count: questionsToInsert.length
         });
 
-    } catch (error) {
-        console.error('Upload Error:', error);
+    } catch (error: any) {
+        console.error('[Upload] Unexpected Error:', error);
         return NextResponse.json(
-            { error: 'An unexpected error occurred during upload.' },
+            { error: `An unexpected error occurred: ${error.message || 'Unknown error'}` },
             { status: 500 }
         );
     }
