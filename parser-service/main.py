@@ -4,7 +4,7 @@ import os
 import re
 import uuid
 import tempfile
-import fitz  # PyMuPDF
+import pdfplumber
 import concurrent.futures
 from supabase import create_client, Client
 from pydantic import BaseModel
@@ -69,70 +69,57 @@ def clean_question_text(text: str):
     return text.strip()
 
 def extract_questions_from_pdf(pdf_path: str):
-    doc = fitz.open(pdf_path)
+    """
+    Extract questions and associated images from a PDF using pdfplumber.
+    pdfplumber provides layout-aware text extraction without C++ compilation.
+    Image extraction is simplified since pdfplumber doesn't embed images directly.
+    For scanned PDFs or diagrams, the Node.js fallback (tesseract.js) handles OCR.
+    """
     questions = []
     
-    for page_num in range(len(doc)):
-        page = doc[page_num]
-        
-        # Images
-        page_images = []
-        for img_info in page.get_images(full=True):
-            xref = img_info[0]
-            base_image = doc.extract_image(xref)
-            rects = page.get_image_rects(xref)
-            if rects:
-                y_center = (rects[0].y0 + rects[0].y1) / 2
-                page_images.append({
-                    "bytes": base_image["image"],
-                    "ext": base_image["ext"],
-                    "y": y_center
-                })
-        
-        # Text blocks
-        text_blocks = []
-        for b in page.get_text("dict")["blocks"]:
-            if b["type"] == 0:
-                text = "".join(span["text"] + " " for line in b["lines"] for span in line["spans"]).strip()
-                if text:
-                    text_blocks.append({"text": text, "y": b["bbox"][1]})
-        
-        current_q = None
-        for tb in text_blocks:
-            match = QUESTION_START_REGEX.match(tb["text"])
-            if match:
+    try:
+        with pdfplumber.open(pdf_path) as pdf:
+            for page_num, page in enumerate(pdf.pages):
+                # Extract text
+                text = page.extract_text() or ""
+                if not text.strip():
+                    continue
+                
+                # Parse questions from text
+                lines = text.split('\n')
+                current_q = None
+                
+                for line in lines:
+                    match = QUESTION_START_REGEX.match(line)
+                    if match:
+                        if current_q and len(current_q["text"]) > 10:
+                            questions.append(current_q)
+                        current_q = {
+                            "text": match.group(2).strip(),
+                            "page": page_num,
+                            "image_bytes": None,
+                            "image_ext": None
+                        }
+                    elif current_q:
+                        current_q["text"] += "\n" + line
+                
                 if current_q and len(current_q["text"]) > 10:
                     questions.append(current_q)
-                current_q = {
-                    "text": match.group(2).strip(),
-                    "y_start": tb["y"],
-                    "page": page_num,
-                    "image_bytes": None,
-                    "image_ext": None
-                }
-            elif current_q:
-                current_q["text"] += "\n" + tb["text"]
                 
-        if current_q and len(current_q["text"]) > 10:
-            questions.append(current_q)
-            
-        # Associate images spatially
-        page_qs = [q for q in questions if q.get("page") == page_num]
-        for img in page_images:
-            best_q = None
-            min_dist = float('inf')
-            for q in page_qs:
-                if q["y_start"] <= img["y"] + 50:
-                    dist = img["y"] - q["y_start"]
-                    if dist >= -50 and dist < min_dist:
-                        min_dist = dist
-                        best_q = q
-            
-            if best_q and not best_q["image_bytes"]:
-                best_q["image_bytes"] = img["bytes"]
-                best_q["image_ext"] = img["ext"]
-
-    doc.close()
+                # Note: pdfplumber requires pdf2image + pypdf for reliable image extraction.
+                # For now, images are skipped in text PDFs; scanned PDFs fall back to Node.js OCR.
+                # If you need image extraction here, install pdf2image and uncomment below.
+                # try:
+                #     images = page.find_image_rects()
+                #     for img_rect in images[:1]:  # Just first image per page for now
+                #         # Crop and convert to image (requires pdf2image)
+                #         pass
+                # except:
+                #     pass
+    
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"PDF extraction failed: {str(e)}")
+    
     return questions
 
 def process_single_question(q, domain, supabase: Client):
