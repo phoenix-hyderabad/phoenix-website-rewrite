@@ -32,13 +32,32 @@ from typing import List, Dict, Tuple, Optional
 from dataclasses import dataclass, field
 from pathlib import Path
 
+# Load .env from project root
+try:
+    from dotenv import load_dotenv
+    _script_dir = Path(__file__).resolve().parent
+    # scripts/ -> mock/ -> app/ -> src/ -> project root
+    _project_root = _script_dir.parent.parent.parent.parent.parent
+    _env_file = _project_root / ".env"
+    load_dotenv(_env_file if _env_file.exists() else None)
+except ImportError:
+    pass  # env vars must be set manually
+
+# Supabase
+try:
+    from supabase import create_client as _create_supabase_client
+    SUPABASE_AVAILABLE = True
+except ImportError:
+    SUPABASE_AVAILABLE = False
+    print("[warn] supabase not available. Install with: pip install supabase")
+
 # GUI libraries - PyQt5
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QPushButton, QFileDialog, QMessageBox, QTextEdit,
     QListWidget, QGroupBox, QScrollArea, QSplitter, QLineEdit,
     QTableWidget, QTableWidgetItem, QHeaderView, QDialog, QSpinBox,
-    QStatusBar, QMenuBar, QAction, QToolBar
+    QStatusBar, QMenuBar, QAction, QToolBar, QComboBox
 )
 from PyQt5.QtCore import Qt, QRect, QPoint, QSize
 from PyQt5.QtGui import QPixmap, QPainter, QPen, QColor, QImage, QFont
@@ -66,6 +85,13 @@ MIN_QUESTION_LENGTH = 10
 RENDER_DPI = 150  # DPI for rendering PDF pages
 IMAGE_DIR = "extracted_images"
 DB_FILE = "questions_database.db"
+SUPABASE_TABLE = "phoenix-website_mock_oa"
+SUPABASE_SECTIONS = [
+    "Analog Electronics",
+    "Digital Electronics",
+    "C / Embedded Systems",
+    "Electronics Aptitude",
+]
 
 
 # -----------------------------
@@ -996,6 +1022,32 @@ class QuestionSelectorGUI(QMainWindow):
         save_layout.addWidget(btn_update_ocr)
         
         right_layout.addWidget(save_group)
+
+        # ── Supabase Upload ────────────────────────────────────────
+        upload_group = QGroupBox("Upload to Supabase")
+        upload_layout = QVBoxLayout(upload_group)
+
+        upload_layout.addWidget(QLabel("Section:"))
+        self.section_combo = QComboBox()
+        self.section_combo.addItems(SUPABASE_SECTIONS)
+        upload_layout.addWidget(self.section_combo)
+
+        btn_upload_one = QPushButton("☁️ Upload This Question")
+        btn_upload_one.setToolTip("Save & immediately upload current question to Supabase")
+        btn_upload_one.clicked.connect(self._upload_current_to_supabase)
+        upload_layout.addWidget(btn_upload_one)
+
+        btn_upload_all = QPushButton("☁️ Upload ALL Saved Questions")
+        btn_upload_all.setToolTip("Upload all questions in saved_questions/ to Supabase")
+        btn_upload_all.clicked.connect(self._upload_all_to_supabase)
+        upload_layout.addWidget(btn_upload_all)
+
+        if not SUPABASE_AVAILABLE:
+            lbl_warn = QLabel("⚠ supabase not installed")
+            lbl_warn.setStyleSheet("color: orange; font-size: 10px;")
+            upload_layout.addWidget(lbl_warn)
+
+        right_layout.addWidget(upload_group)
         
         right_layout.addStretch()
         
@@ -1383,6 +1435,173 @@ class QuestionSelectorGUI(QMainWindow):
         if self.parser:
             self.parser.close()
         event.accept()
+
+    # ── Supabase helpers ────────────────────────────────────────────────────
+
+    def _get_supabase_client(self):
+        """Create and return a Supabase client, or None on error."""
+        if not SUPABASE_AVAILABLE:
+            QMessageBox.warning(self, "Supabase", "supabase package not installed.\n\nRun: pip install supabase")
+            return None
+
+        url = os.environ.get("NEXT_PUBLIC_SUPABASE_URL")
+        key = (
+            os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
+            or os.environ.get("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY")
+        )
+
+        if not url or not key:
+            QMessageBox.warning(
+                self, "Supabase",
+                "Supabase credentials not found.\n\n"
+                "Make sure your .env contains:\n"
+                "  NEXT_PUBLIC_SUPABASE_URL\n"
+                "  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"
+            )
+            return None
+
+        return _create_supabase_client(url, key)
+
+    def _build_supabase_row(self, q_data: dict, section: str) -> dict:
+        """Build a Supabase row dict from saved question data."""
+        import re as _re
+        text = (q_data.get("text") or q_data.get("ocr_text") or "").strip()
+
+        # Try to parse MCQ options embedded in the text
+        option_pattern = _re.compile(
+            r'(?:^|\n)\s*(?:\(?([A-Da-d])[).]\s*)(.+?)(?=\n\s*\(?[A-Da-d][).]|$)',
+            _re.DOTALL
+        )
+        matches = option_pattern.findall(text)
+        options = {}
+        if len(matches) >= 2:
+            for i, (_, opt_text) in enumerate(matches[:4]):
+                options[f"option{i+1}"] = opt_text.strip()
+            # Strip options from the stem
+            first_option_pos = text.find(matches[0][1][:10]) if matches else -1
+            if first_option_pos > 10:
+                text = text[:first_option_pos].strip()
+
+        row = {
+            "qtext": text,
+            "qimage": None,
+            "type": "mcq",
+            "section": section,
+            "option1": options.get("option1"),
+            "option2": options.get("option2"),
+            "option3": options.get("option3"),
+            "option4": options.get("option4"),
+            "correctans": None,
+        }
+
+        images = q_data.get("images", [])
+        if images:
+            row["qimage"] = images[0]
+
+        return row
+
+    def _upload_current_to_supabase(self):
+        """Save the current question locally, then upload it to Supabase."""
+        if not self.questions:
+            QMessageBox.warning(self, "Upload", "No questions loaded.")
+            return
+
+        # First save it locally
+        self._save_question("text_only")
+
+        supabase = self._get_supabase_client()
+        if not supabase:
+            return
+
+        section = self.section_combo.currentText()
+        question = self.questions[self.current_question_index]
+
+        # Load the just-saved data from storage
+        saved = self.storage.find_question_by_qid(question.qid)
+        if not saved:
+            QMessageBox.warning(self, "Upload", "Question not found in local storage.\nSave it first.")
+            return
+
+        row = self._build_supabase_row(saved, section)
+        if not row["qtext"] or len(row["qtext"]) < 10:
+            QMessageBox.warning(self, "Upload", "Question text is too short to upload.")
+            return
+
+        try:
+            result = supabase.table(SUPABASE_TABLE).insert(row).execute()
+            if result.data:
+                self.statusBar().showMessage(f"☁️ Uploaded Q{question.qid} to Supabase ({section})")
+                QMessageBox.information(
+                    self, "Upload Successful",
+                    f"Question {question.qid} uploaded to Supabase!\nSection: {section}"
+                )
+            else:
+                QMessageBox.warning(self, "Upload", f"Upload returned no data.\nResponse: {result}")
+        except Exception as e:
+            QMessageBox.critical(self, "Upload Error", str(e))
+
+    def _upload_all_to_supabase(self):
+        """Upload all questions in saved_questions/ to Supabase."""
+        supabase = self._get_supabase_client()
+        if not supabase:
+            return
+
+        section = self.section_combo.currentText()
+        all_questions = self.storage.get_all_questions()
+
+        if not all_questions:
+            QMessageBox.information(self, "Upload", "No saved questions found.\nSave some questions first.")
+            return
+
+        reply = QMessageBox.question(
+            self, "Confirm Upload",
+            f"Upload {len(all_questions)} question(s) to Supabase?\nSection: {section}",
+            QMessageBox.Yes | QMessageBox.No
+        )
+        if reply != QMessageBox.Yes:
+            return
+
+        # Get existing question texts to avoid duplicates
+        try:
+            existing_resp = supabase.table(SUPABASE_TABLE).select("qtext").eq("section", section).execute()
+            existing_texts = {r["qtext"] for r in (existing_resp.data or []) if r.get("qtext")}
+        except Exception:
+            existing_texts = set()
+
+        uploaded = 0
+        skipped = 0
+        errors = 0
+
+        for q_data in all_questions:
+            try:
+                row = self._build_supabase_row(q_data, section)
+                qtext = row.get("qtext", "")
+
+                if not qtext or len(qtext) < 10:
+                    skipped += 1
+                    continue
+
+                if qtext in existing_texts:
+                    skipped += 1
+                    continue
+
+                result = supabase.table(SUPABASE_TABLE).insert(row).execute()
+                if result.data:
+                    existing_texts.add(qtext)
+                    uploaded += 1
+                else:
+                    errors += 1
+            except Exception as e:
+                print(f"[upload error] {e}")
+                errors += 1
+
+        self.statusBar().showMessage(
+            f"☁️ Upload done — {uploaded} uploaded, {skipped} skipped, {errors} errors"
+        )
+        QMessageBox.information(
+            self, "Upload Complete",
+            f"Uploaded: {uploaded}\nSkipped (duplicates/short): {skipped}\nErrors: {errors}"
+        )
 
 
 # -----------------------------

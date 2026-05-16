@@ -9,6 +9,10 @@ PyQt5>=5.15.0        # GUI framework
 # OCR (optional but recommended)
 pytesseract>=0.3.10  # OCR wrapper
 
+# Supabase integration (for upload_to_supabase.py)
+supabase>=2.0.0      # Supabase Python client
+python-dotenv>=1.0.0 # Load .env file
+
 # Note: You also need to install Tesseract OCR on your system:
 # - macOS: brew install tesseract
 # - Ubuntu: sudo apt install tesseract-ocr

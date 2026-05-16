@@ -66,25 +66,30 @@ function MockOAResults() {
             return;
         }
 
-        // Parse URL parameters or get from session storage
-        const totalQuestions = parseInt(searchParams.get('total') ?? '10');
+        // Parse URL parameters
+        const totalQuestions = parseInt(searchParams.get('total') ?? '0');
         const correctAnswers = parseInt(searchParams.get('correct') ?? '0');
+        const incorrectAnswers = parseInt(searchParams.get('incorrect') ?? '0');
         const timeTaken = searchParams.get('time') ?? '00:00';
         const domain = searchParams.get('domain') ?? 'Aptitude';
 
-        const incorrectAnswers = parseInt(searchParams.get('incorrect') ?? '0');
-        const unanswered = totalQuestions - correctAnswers - incorrectAnswers;
-        const percentage = Math.round((correctAnswers / totalQuestions) * 100);
+        // Guard against invalid values
+        const safeTotalQuestions = isNaN(totalQuestions) || totalQuestions <= 0 ? 1 : totalQuestions;
+        const safeCorrectAnswers = isNaN(correctAnswers) ? 0 : correctAnswers;
+        const safeIncorrectAnswers = isNaN(incorrectAnswers) ? 0 : incorrectAnswers;
+
+        const unanswered = Math.max(0, safeTotalQuestions - safeCorrectAnswers - safeIncorrectAnswers);
+        const percentage = Math.round((safeCorrectAnswers / safeTotalQuestions) * 100);
 
         setStats({
-            totalQuestions,
-            correctAnswers,
-            incorrectAnswers,
+            totalQuestions: safeTotalQuestions,
+            correctAnswers: safeCorrectAnswers,
+            incorrectAnswers: safeIncorrectAnswers,
             unanswered,
             timeTaken,
             domain,
-            score: correctAnswers,
-            percentage,
+            score: safeCorrectAnswers,
+            percentage: isNaN(percentage) ? 0 : percentage,
         });
 
         setLoading(false);
@@ -96,6 +101,11 @@ function MockOAResults() {
         if (percentage >= 60) return { level: 'Good', color: 'text-yellow-400', bgColor: 'bg-yellow-500/20' };
         if (percentage >= 40) return { level: 'Average', color: 'text-orange-400', bgColor: 'bg-orange-500/20' };
         return { level: 'Needs Improvement', color: 'text-red-400', bgColor: 'bg-red-500/20' };
+    };
+
+    const safePercentage = (numerator: number, denominator: number) => {
+        if (denominator <= 0) return 0;
+        return (numerator / denominator) * 100;
     };
 
     const performance = getPerformanceLevel(stats.percentage);
@@ -227,7 +237,7 @@ function MockOAResults() {
                             <div className="w-full bg-slate-700 rounded-full h-4 overflow-hidden">
                                 <div
                                     className="bg-gradient-to-r from-green-500 to-green-400 h-full rounded-full transition-all duration-1000 ease-out"
-                                    style={{ width: `${(stats.correctAnswers / stats.totalQuestions) * 100}%` }}
+                                    style={{ width: `${safePercentage(stats.correctAnswers, stats.totalQuestions)}%` }}
                                 ></div>
                             </div>
                         </div>
@@ -243,7 +253,7 @@ function MockOAResults() {
                             <div className="w-full bg-slate-700 rounded-full h-4 overflow-hidden">
                                 <div
                                     className="bg-gradient-to-r from-red-500 to-red-400 h-full rounded-full transition-all duration-1000 ease-out"
-                                    style={{ width: `${(stats.incorrectAnswers / stats.totalQuestions) * 100}%` }}
+                                    style={{ width: `${safePercentage(stats.incorrectAnswers, stats.totalQuestions)}%` }}
                                 ></div>
                             </div>
                         </div>
@@ -260,7 +270,7 @@ function MockOAResults() {
                                 <div className="w-full bg-slate-700 rounded-full h-4 overflow-hidden">
                                     <div
                                         className="bg-gradient-to-r from-gray-500 to-gray-400 h-full rounded-full transition-all duration-1000 ease-out"
-                                        style={{ width: `${(stats.unanswered / stats.totalQuestions) * 100}%` }}
+                                        style={{ width: `${safePercentage(stats.unanswered, stats.totalQuestions)}%` }}
                                     ></div>
                                 </div>
                             </div>

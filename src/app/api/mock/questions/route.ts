@@ -1,7 +1,9 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { db } from '~/server/db';
-import { mockOA } from '~/server/db/schema';
-import { eq, sql } from 'drizzle-orm';
+import { createClient } from '@supabase/supabase-js';
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
+const TABLE_NAME = 'phoenix-website_mock_oa';
 
 export async function GET(request: NextRequest) {
     try {
@@ -33,61 +35,78 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        // Fetch random questions from the database based on section
-        const questions = await db
-            .select()
-            .from(mockOA)
-            .where(eq(mockOA.section, dbSection))
-            .orderBy(sql`RANDOM()`)
-            .limit(numQuestions);
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        console.log(`Raw database query returned ${questions.length} questions`);
-        if (questions.length > 0) {
-            console.log('First raw question from DB:', {
-                qid: questions[0]?.qid,
-                section: questions[0]?.section,
-                correctans: questions[0]?.correctans,
-                allKeys: Object.keys(questions[0] ?? {}),
-                fullObject: questions[0]
-            });
-        } else {
-            console.log(`No questions found for section: ${dbSection}`);
+        // Fetch ALL matching questions first, then randomly slice
+        const { data: allQuestions, error: countError } = await supabase
+            .from(TABLE_NAME)
+            .select('qid')
+            .eq('section', dbSection);
+
+        if (countError) {
+            console.error('Supabase count error:', countError);
+            return NextResponse.json({ error: 'Failed to fetch questions' }, { status: 500 });
         }
 
+        const total = allQuestions?.length ?? 0;
+        console.log(`Total questions for section "${dbSection}": ${total}`);
+
+        // Pick random indices
+        const limit = Math.min(numQuestions, total);
+        const randomOffset = total > limit ? Math.floor(Math.random() * (total - limit)) : 0;
+
+        const { data: questions, error } = await supabase
+            .from(TABLE_NAME)
+            .select('*')
+            .eq('section', dbSection)
+            .range(randomOffset, randomOffset + limit - 1);
+
+        if (error) {
+            console.error('Supabase error:', error);
+            return NextResponse.json({ error: 'Failed to fetch questions' }, { status: 500 });
+        }
+
+        if (!questions || questions.length === 0) {
+            console.log(`No questions found for section: ${dbSection}`);
+            return NextResponse.json({
+                questions: [],
+                domain,
+                count: 0,
+            });
+        }
+
+        // Shuffle the results for randomness
+        const shuffled = [...questions].sort(() => Math.random() - 0.5);
+
         // Transform the data to match the frontend format
-        const formattedQuestions = questions.map((q) => ({
-            id: q.qid,
-            text: q.qtext ?? '',
-            image: q.qimage,
+        const formattedQuestions = shuffled.map((q: Record<string, unknown>) => ({
+            id: q.qid as number,
+            text: (q.qtext as string) ?? '',
+            image: q.qimage as string | null,
             options: [
-                q.option1 ?? '',
-                q.option2 ?? '',
-                q.option3 ?? '',
-                q.option4 ?? '',
+                (q.option1 as string) ?? '',
+                (q.option2 as string) ?? '',
+                (q.option3 as string) ?? '',
+                (q.option4 as string) ?? '',
             ].filter(opt => opt !== ''),
-            // Create a map of option numbers to their text values
             optionsMap: {
-                'option1': q.option1 ?? '',
-                'option2': q.option2 ?? '',
-                'option3': q.option3 ?? '',
-                'option4': q.option4 ?? '',
+                'option1': (q.option1 as string) ?? '',
+                'option2': (q.option2 as string) ?? '',
+                'option3': (q.option3 as string) ?? '',
+                'option4': (q.option4 as string) ?? '',
             },
-            correctAnswer: q.correctans ?? '', // This will be "option1", "option2", etc.
-            section: q.section,
+            correctAnswer: (q.correctans as string) ?? '',
+            section: q.section as string,
         }));
 
         console.log(`Fetched ${formattedQuestions.length} questions for domain: ${domain}`);
-        console.log('Sample question with correct answer:', {
-            id: formattedQuestions[0]?.id,
-            correctAnswer: formattedQuestions[0]?.correctAnswer,
-            optionsMap: formattedQuestions[0]?.optionsMap,
-        });
 
         return NextResponse.json({
             questions: formattedQuestions,
-            domain: domain,
+            domain,
             count: formattedQuestions.length,
         });
+
     } catch (error) {
         console.error('Error fetching questions:', error);
         return NextResponse.json(
@@ -95,4 +114,4 @@ export async function GET(request: NextRequest) {
             { status: 500 }
         );
     }
-}
+}

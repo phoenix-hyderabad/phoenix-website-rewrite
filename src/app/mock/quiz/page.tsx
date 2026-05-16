@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Flag, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 
@@ -9,65 +10,42 @@ interface Question {
   text: string;
   image?: string;
   options: string[];
-  optionsMap: Record<string, string>; // Maps option number to text (e.g., "option1": "a")
-  correctAnswer?: string; // Will be "option1", "option2", etc.
+  optionsMap: Record<string, string>;
+  correctAnswer?: string;
   section: string;
-}
-
-interface Section {
-  id: string;
-  name: string;
-  timeLimit: number; // in seconds
-  questionRange: {
-    start: number;
-    end: number;
-  };
 }
 
 interface ApiResponse {
   questions: Question[];
   domain: string;
   count: number;
-  sections: Section[];
 }
 
 function QuizAssessment() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [currentQuestion, setCurrentQuestion] = useState(1);
-  const [currentSection, setCurrentSection] = useState<string>('A');
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string>>({});
   const [flaggedQuestions, setFlaggedQuestions] = useState<Set<number>>(new Set());
-  const [sectionTimers, setSectionTimers] = useState<Record<string, number>>({
-    'A': 30 * 60, // 30 minutes for section A
-    'B': 30 * 60, // 30 minutes for section B
-    'C': 30 * 60, // 30 minutes for section C
-  });
-  const [sections] = useState<Section[]>([
-    { id: 'A', name: 'Aptitude', timeLimit: 30 * 60, questionRange: { start: 1, end: 20 } },
-    { id: 'B', name: 'Programming Basics', timeLimit: 30 * 60, questionRange: { start: 21, end: 40 } },
-    { id: 'C', name: 'Technical', timeLimit: 30 * 60, questionRange: { start: 41, end: 60 } },
-  ]);
+  const [timeRemaining, setTimeRemaining] = useState(30 * 60); // default 30 min
+  const [totalTimeLimit, setTotalTimeLimit] = useState(30 * 60);
   const [domain, setDomain] = useState('Aptitude');
-  const [totalQuestions, setTotalQuestions] = useState(60);
+  const [totalQuestions, setTotalQuestions] = useState(0);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
 
   // Fetch questions from API
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const domainParam = params.get('domain') ?? 'aptitude';
-    const questionsParam = parseInt(params.get('questions') ?? '10');
-    const timeParam = parseInt(params.get('time') ?? '30');
+    const domainParam = searchParams.get('domain') ?? 'aptitude';
+    const questionsParam = parseInt(searchParams.get('questions') ?? '10');
+    const timeParam = parseInt(searchParams.get('time') ?? '30');
 
     setDomain(domainParam.charAt(0).toUpperCase() + domainParam.slice(1));
-    setTotalQuestions(questionsParam);
-    
-    // Initialize section timers based on the time parameter
-    setSectionTimers({
-      'A': timeParam * 60,
-      'B': timeParam * 60,
-      'C': timeParam * 60,
-    });
+    setTimeRemaining(timeParam * 60);
+    setTotalTimeLimit(timeParam * 60);
 
     // Fetch questions from the API
     const fetchQuestions = async () => {
@@ -91,15 +69,6 @@ function QuizAssessment() {
           }));
           setQuestions(renumberedQuestions);
           setTotalQuestions(renumberedQuestions.length);
-
-          // Log to verify correct answers are loaded
-          console.log('Questions loaded:', renumberedQuestions.length);
-          console.log('Sample question:', {
-            id: renumberedQuestions[0]?.id,
-            text: renumberedQuestions[0]?.text.substring(0, 50) + '...',
-            correctAnswer: renumberedQuestions[0]?.correctAnswer,
-            hasCorrectAnswer: !!renumberedQuestions[0]?.correctAnswer
-          });
         } else {
           setError('No questions found for this domain');
         }
@@ -112,121 +81,75 @@ function QuizAssessment() {
     };
 
     fetchQuestions().catch(console.error);
-  }, []);
+  }, [searchParams]);
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback((forceSubmit = false) => {
+    if (submitted) return;
+
     const answeredCount = Object.keys(selectedAnswers).length;
-    const unfinishedSections = sections.filter(section => (sectionTimers[section.id] ?? 0) > 0);
-    
-    if (unfinishedSections.length > 0) {
-      const message = `You still have time remaining in ${unfinishedSections.length} section(s). Are you sure you want to submit?`;
-      if (!confirm(message)) {
+
+    if (!forceSubmit) {
+      if (!confirm(`You have answered ${answeredCount} out of ${totalQuestions} questions. Are you sure you want to submit?`)) {
         return;
       }
     }
 
-    if (confirm(`You have answered ${answeredCount} out of ${totalQuestions} questions. Are you sure you want to submit?`)) {
-      // Calculate results for each section
-      const sectionResults = sections.map(section => {
-        const sectionQuestions = questions.filter(q => 
-          q.id >= section.questionRange.start && 
-          q.id <= section.questionRange.end
-        );
-        
-        let correctAnswers = 0;
-        let incorrectAnswers = 0;
+    setSubmitted(true);
 
-        sectionQuestions.forEach((question) => {
-          const userSelectedOption = selectedAnswers[question.id];
-          if (userSelectedOption) {
-            const correctOption = question.correctAnswer?.trim() ?? '';
-            if (correctOption && userSelectedOption === correctOption) {
-              correctAnswers++;
-              console.log(`Section ${section.id} - Q${question.id}: ✅ Correct!`);
-            } else if (correctOption) {
-              incorrectAnswers++;
-              console.log(`Section ${section.id} - Q${question.id}: ❌ Wrong!`);
-            }
-          }
-        });
+    // Calculate results
+    let correctCount = 0;
+    let incorrectCount = 0;
 
-        return {
-          sectionId: section.id,
-          sectionName: section.name,
-          total: sectionQuestions.length,
-          correct: correctAnswers,
-          incorrect: incorrectAnswers,
-          timeSpent: section.timeLimit - (sectionTimers[section.id] ?? 0)
-        };
-      });
-
-      const totalCorrect = sectionResults.reduce((sum, section) => sum + section.correct, 0);
-      const totalIncorrect = sectionResults.reduce((sum, section) => sum + section.incorrect, 0);
-      
-      // Format section times
-      const sectionTimesFormatted = sectionResults.map(section => {
-        const minutes = Math.floor(section.timeSpent / 60);
-        const seconds = section.timeSpent % 60;
-        return `${section.sectionName}=${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-      }).join(',');
-
-      // Navigate to results page with detailed section data
-      const resultsParams = new URLSearchParams({
-        total: totalQuestions.toString(),
-        correct: totalCorrect.toString(),
-        incorrect: totalIncorrect.toString(),
-        sections: JSON.stringify(sectionResults),
-        sectionTimes: sectionTimesFormatted,
-        domain: domain,
-      });
-
-      window.location.href = `/mock/results?${resultsParams.toString()}`;
-    }
-  }, [selectedAnswers, totalQuestions, questions, domain, sections, sectionTimers]);
-
-  // All sections timer countdown
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setSectionTimers((prev) => {
-        const newTimers = { ...prev };
-        let allExpired = true;
-        
-        // Update all section timers simultaneously
-        sections.forEach(section => {
-          const currentTime = newTimers[section.id] ?? 0;
-          if (currentTime > 0) {
-            newTimers[section.id] = currentTime - 1;
-            allExpired = false;
-          }
-          
-          // If a section timer expires and it's the current section, switch to another section
-          if (currentTime <= 0 && section.id === currentSection) {
-            const nextAvailableSection = sections.find(s => {
-              const sectionTime = newTimers[s.id] ?? 0;
-              return s.id !== currentSection && sectionTime > 0;
-            })?.id;
-            
-            if (nextAvailableSection) {
-              setCurrentSection(nextAvailableSection);
-            }
-          }
-        });
-        
-        // If all timers have expired, submit the quiz
-        if (allExpired) {
-          clearInterval(timer);
-          handleSubmit();
+    questions.forEach((question) => {
+      const userSelectedOption = selectedAnswers[question.id];
+      if (userSelectedOption) {
+        const correctOption = question.correctAnswer?.trim() ?? '';
+        if (correctOption && userSelectedOption === correctOption) {
+          correctCount++;
+        } else if (correctOption) {
+          incorrectCount++;
         }
-        
-        return newTimers;
+      }
+    });
+
+    // Calculate time spent
+    const timeSpentSeconds = totalTimeLimit - timeRemaining;
+    const minutes = Math.floor(timeSpentSeconds / 60);
+    const seconds = timeSpentSeconds % 60;
+    const timeFormatted = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+    // Navigate to results page
+    const resultsParams = new URLSearchParams({
+      total: totalQuestions.toString(),
+      correct: correctCount.toString(),
+      incorrect: incorrectCount.toString(),
+      time: timeFormatted,
+      domain: domain,
+    });
+
+    router.push(`/mock/results?${resultsParams.toString()}`);
+  }, [selectedAnswers, totalQuestions, questions, domain, timeRemaining, totalTimeLimit, submitted, router]);
+
+  // Timer countdown
+  useEffect(() => {
+    if (loading || submitted || totalQuestions === 0) return;
+
+    const timer = setInterval(() => {
+      setTimeRemaining((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          // Auto-submit without confirmation dialogs
+          handleSubmit(true);
+          return 0;
+        }
+        return prev - 1;
       });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [handleSubmit, sections, currentSection]);
+  }, [loading, submitted, totalQuestions, handleSubmit]);
 
-  const formatTime = (seconds: number | undefined) => {
-    if (typeof seconds !== 'number') return '00:00';
+  const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
@@ -249,42 +172,22 @@ function QuizAssessment() {
     setFlaggedQuestions(newFlagged);
   };
 
-  const currentSectionData = sections.find(s => s.id === currentSection);
-
   const handleNext = () => {
-    if (!currentSectionData) return;
-    
-    if (currentQuestion < currentSectionData.questionRange.end) {
+    if (currentQuestion < totalQuestions) {
       setCurrentQuestion(currentQuestion + 1);
-    } else {
-      // Try to move to next section
-      const nextSectionIndex = sections.findIndex(s => s.id === currentSection) + 1;
-      const nextSection = sections[nextSectionIndex];
-      if (nextSection) {
-        setCurrentSection(nextSection.id);
-        setCurrentQuestion(nextSection.questionRange.start);
-      }
     }
   };
 
   const handlePrev = () => {
-    if (!currentSectionData) return;
-    
-    if (currentQuestion > currentSectionData.questionRange.start) {
+    if (currentQuestion > 1) {
       setCurrentQuestion(currentQuestion - 1);
-    } else {
-      // Try to move to previous section
-      const prevSectionIndex = sections.findIndex(s => s.id === currentSection) - 1;
-      const prevSection = sections[prevSectionIndex];
-      if (prevSection) {
-        setCurrentSection(prevSection.id);
-        setCurrentQuestion(prevSection.questionRange.end);
-      }
     }
   };
 
   const handleQuestionClick = (questionNum: number) => {
-    setCurrentQuestion(questionNum);
+    if (questionNum >= 1 && questionNum <= totalQuestions) {
+      setCurrentQuestion(questionNum);
+    }
   };
 
   const getQuestionStatus = (qNum: number) => {
@@ -305,6 +208,13 @@ function QuizAssessment() {
 
   const currentQ = questions[currentQuestion - 1];
   const answeredCount = Object.keys(selectedAnswers).length;
+
+  // Determine timer urgency color
+  const timerColor = timeRemaining <= 60
+    ? 'text-red-600 animate-pulse'
+    : timeRemaining <= 300
+      ? 'text-orange-500'
+      : 'text-red-600';
 
   // Show loading state
   if (loading) {
@@ -327,7 +237,7 @@ function QuizAssessment() {
           <h2 className="text-2xl font-bold text-gray-800 mb-4">Error Loading Questions</h2>
           <p className="text-gray-600 mb-6">{error}</p>
           <button
-            onClick={() => window.history.back()}
+            onClick={() => router.back()}
             className="px-6 py-3 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors"
           >
             Go Back
@@ -346,7 +256,7 @@ function QuizAssessment() {
           <h2 className="text-2xl font-bold text-gray-800 mb-4">No Questions Available</h2>
           <p className="text-gray-600 mb-6">There are no questions available for the selected domain.</p>
           <button
-            onClick={() => window.history.back()}
+            onClick={() => router.back()}
             className="px-6 py-3 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors"
           >
             Go Back
@@ -360,45 +270,19 @@ function QuizAssessment() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-4">
       {/* Header */}
       <div className="bg-white rounded-lg shadow-md p-4 mb-4">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl text-blue-600 font-semibold">Sections</h2>
-          <div className="text-right">
-            <div className="text-2xl font-bold text-red-600">
-              {formatTime(sectionTimers[currentSection])}
-            </div>
-            <div className="text-sm text-gray-600">Current Section Time Remaining</div>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl text-blue-600 font-semibold">{domain} Assessment</h2>
+            <p className="text-sm text-gray-600 mt-1">
+              {totalQuestions} questions · {formatTime(totalTimeLimit)} total time
+            </p>
           </div>
-        </div>
-        
-        <div className="grid grid-cols-3 gap-4 mb-4">
-          {sections.map((section) => (
-            <button
-              key={section.id}
-              onClick={() => setCurrentSection(section.id)}
-              className={`p-4 rounded-lg transition-colors ${
-                currentSection === section.id
-                  ? 'bg-blue-700 text-white'
-                  : 'bg-blue-500 text-white hover:bg-blue-600'
-              }`}
-            >
-              <div className="font-semibold">{section.name}</div>
-              <div className="text-sm mt-1">
-                Questions {section.questionRange.start}-{section.questionRange.end}
-              </div>
-              <div className="text-sm mt-1">
-                Time: {formatTime(sectionTimers[section.id])}
-              </div>
-            </button>
-          ))}
-        </div>
-        
-        <div className="text-sm text-gray-600">
-          <p>Current Section: <span className="font-semibold">{
-            sections.find(s => s.id === currentSection)?.name
-          }</span></p>
-          <p className="mt-1">
-            Navigate between sections freely. Each section has its own timer.
-          </p>
+          <div className="text-right">
+            <div className={`text-2xl font-bold ${timerColor}`}>
+              {formatTime(timeRemaining)}
+            </div>
+            <div className="text-sm text-gray-600">Time Remaining</div>
+          </div>
         </div>
       </div>
 
@@ -480,7 +364,7 @@ function QuizAssessment() {
 
             <div className="space-y-3">
               {currentQ?.options.map((option, index) => {
-                const optionKey = `option${index + 1}`; // "option1", "option2", etc.
+                const optionKey = `option${index + 1}`;
                 return (
                   <label
                     key={index}
@@ -501,7 +385,7 @@ function QuizAssessment() {
             </div>
 
             <button
-              onClick={handleSubmit}
+              onClick={() => handleSubmit(false)}
               className="w-full mt-6 py-3 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors"
             >
               Submit Test
@@ -574,4 +458,19 @@ function QuizAssessment() {
   );
 }
 
-export default QuizAssessment;
+function QuizPageWrapper() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-lg text-gray-700">Loading assessment...</p>
+        </div>
+      </div>
+    }>
+      <QuizAssessment />
+    </Suspense>
+  );
+}
+
+export default QuizPageWrapper;
