@@ -67,7 +67,40 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Convert File to Buffer for pdf-parse
+        // --- MICROSERVICE INTEGRATION ---
+        // If the Python Microservice URL is provided, forward the file to it to handle image extraction.
+        const pythonServiceUrl = process.env.PYTHON_PARSER_URL;
+        if (pythonServiceUrl) {
+            try {
+                // We create a new FormData to send to the python service
+                const microserviceFormData = new FormData();
+                microserviceFormData.append('file', file);
+                // Send the exact database section name that the python script expects
+                microserviceFormData.append('domain', dbSection);
+
+                const response = await fetch(pythonServiceUrl, {
+                    method: 'POST',
+                    body: microserviceFormData,
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Microservice failed to process the PDF.');
+                }
+
+                return NextResponse.json({
+                    success: true,
+                    message: data.message,
+                    count: data.count
+                });
+            } catch (err: any) {
+                console.error('Python Microservice Error:', err);
+                return NextResponse.json({ error: 'Failed to communicate with the PDF Parsing Microservice.' }, { status: 502 });
+            }
+        }
+        // --------------------------------
+
+        // Convert File to Buffer for pdf-parse (Fallback text-only parsing)
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
 
