@@ -1,22 +1,39 @@
-import * as pdfParseModule from 'pdf-parse';
-
-// pdf-parse v2 exports PDFParse as a class constructor
-const PDFParse = (pdfParseModule as any).PDFParse || (pdfParseModule as any).default || pdfParseModule;
+// Direct pdfjs-dist usage — runs as external package (not bundled by Turbopack)
+// See next.config.js: serverExternalPackages includes "pdfjs-dist"
 
 export interface ParsedPdf {
   text: string;
   pageTexts: string[];
-  raw?: any;
 }
 
 export async function parsePdfBuffer(buffer: Buffer): Promise<ParsedPdf> {
-  // pdf-parse v2: constructor takes Uint8Array, then .load() then .getText()
-  const arr = new Uint8Array(buffer);
-  const parser = new PDFParse(arr);
-  await parser.load();
-  const text: string = await parser.getText();
-  // pdf-parse often inserts form-feed (\f) between pages; split on that as a best-effort.
-  const pageTexts = text.split(/\f+/).map((p: string) => p.trim()).filter(Boolean);
+  // Dynamic import so it resolves at runtime from node_modules (not bundled)
+  const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.mjs");
+
+  // Disable worker — run PDF.js inline on the server thread
+  if (pdfjsLib.GlobalWorkerOptions) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "";
+  }
+
+  const data = new Uint8Array(buffer);
+  const loadingTask = pdfjsLib.getDocument({
+    data,
+    useWorkerFetch: false,
+    isEvalSupported: false,
+    useSystemFonts: true,
+  });
+  const doc = await loadingTask.promise;
+
+  const pageTexts: string[] = [];
+  for (let i = 1; i <= doc.numPages; i++) {
+    const page = await doc.getPage(i);
+    const content = await page.getTextContent();
+    const strings = content.items
+      .filter((item: any) => item.str !== undefined)
+      .map((item: any) => item.str as string);
+    pageTexts.push(strings.join(" "));
+  }
+
+  const text = pageTexts.join("\n\n");
   return { text, pageTexts };
 }
-
