@@ -1,5 +1,6 @@
-// Direct pdfjs-dist usage — runs as external package (not bundled by Turbopack)
-// See next.config.js: serverExternalPackages includes "pdfjs-dist"
+// pdf-parse v1 — bundles its own pdfjs, no workers, no external deps, just works
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const pdf = require("pdf-parse");
 
 export interface ParsedPdf {
   text: string;
@@ -7,33 +8,11 @@ export interface ParsedPdf {
 }
 
 export async function parsePdfBuffer(buffer: Buffer): Promise<ParsedPdf> {
-  // Dynamic import so it resolves at runtime from node_modules (not bundled)
-  const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.mjs");
-
-  // Disable worker — run PDF.js inline on the server thread
-  if (pdfjsLib.GlobalWorkerOptions) {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = "";
-  }
-
-  const data = new Uint8Array(buffer);
-  const loadingTask = pdfjsLib.getDocument({
-    data,
-    useWorkerFetch: false,
-    isEvalSupported: false,
-    useSystemFonts: true,
-  });
-  const doc = await loadingTask.promise;
-
-  const pageTexts: string[] = [];
-  for (let i = 1; i <= doc.numPages; i++) {
-    const page = await doc.getPage(i);
-    const content = await page.getTextContent();
-    const strings = content.items
-      .filter((item: any) => item.str !== undefined)
-      .map((item: any) => item.str as string);
-    pageTexts.push(strings.join(" "));
-  }
-
-  const text = pageTexts.join("\n\n");
+  const data = await pdf(buffer);
+  const text: string = data.text || "";
+  const pageTexts = text
+    .split(/\f+/)
+    .map((p: string) => p.trim())
+    .filter(Boolean);
   return { text, pageTexts };
 }

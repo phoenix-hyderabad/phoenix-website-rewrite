@@ -8,7 +8,6 @@ import "./src/env.js";
 
 /** @type {import("next").NextConfig} */
 const config = {
-  serverExternalPackages: ["pdfjs-dist", "pdf-parse"],
   turbopack: {
     root: __dirname,
   },
