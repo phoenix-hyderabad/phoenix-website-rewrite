@@ -1,7 +1,7 @@
 import * as pdfParseModule from 'pdf-parse';
 
-// Handle CommonJS/ESM interop for pdf-parse
-const parsePdf = (pdfParseModule as any).PDFParse || (pdfParseModule as any).default || pdfParseModule;
+// pdf-parse v2 exports PDFParse as a class constructor
+const PDFParse = (pdfParseModule as any).PDFParse || (pdfParseModule as any).default || pdfParseModule;
 
 export interface ParsedPdf {
   text: string;
@@ -10,9 +10,13 @@ export interface ParsedPdf {
 }
 
 export async function parsePdfBuffer(buffer: Buffer): Promise<ParsedPdf> {
-  const data = await parsePdf(buffer as any);
-  const text = data && data.text ? String(data.text) : '';
+  // pdf-parse v2: constructor takes Uint8Array, then .load() then .getText()
+  const arr = new Uint8Array(buffer);
+  const parser = new PDFParse(arr);
+  await parser.load();
+  const text: string = await parser.getText();
   // pdf-parse often inserts form-feed (\f) between pages; split on that as a best-effort.
   const pageTexts = text.split(/\f+/).map((p: string) => p.trim()).filter(Boolean);
-  return { text, pageTexts, raw: data };
+  return { text, pageTexts };
 }
+
