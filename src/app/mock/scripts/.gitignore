@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+*.manifest
+*.spec
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Project specific - Old scripts (not part of new tool)
+phoenixscript.py
+pdf_question_processor.py
+
+# Output directories (generated at runtime)
+extracted_images/
+saved_questions/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# PDF files (too large for git)
+*.pdf
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

@@ -8,5 +8,5 @@ export default {
   dbCredentials: {
     url: env.DATABASE_URL,
   },
-  tablesFilter: ["phoenix-website_*"],
+  tablesFilter: ["phoenix-website_*", "mock_oa"],
 } satisfies Config;

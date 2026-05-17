@@ -29,23 +29,27 @@ const Navbar = () => {
       <NavigationMenu className="max-lg:hidden">
         <NavigationMenuList>
           <NavigationMenuItem>
-            <Link href="resources">Resources</Link>
+            <Link href="/resources">Resources</Link>
           </NavigationMenuItem>
           <NavigationMenuItem>
             <Link href="projects">Projects</Link>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Link href="thriveforce">Thriveforce</Link>
+            <Link href="/mock">Mock OA</Link>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Link href="inductions">Inductions</Link>
+            <Link href="/thriveforce">Thriveforce</Link>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Link href="livewire">LiveWire</Link>
+            <Link href="/inductions">Inductions</Link>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Link href="aboutus">About us</Link>
+            <Link href="/livewire">LiveWire</Link>
           </NavigationMenuItem>
+          <NavigationMenuItem>
+            <Link href="/aboutus">About us</Link>
+          </NavigationMenuItem>
+          
           {/* <NavigationMenuItem>
             <Link href="apply">Apply</Link>
           </NavigationMenuItem>

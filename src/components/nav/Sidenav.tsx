@@ -83,6 +83,7 @@ const Sidenav = () => {
           <Link href="thriveforce">Thriveforce</Link>
           <Link href="inductions">Inductions</Link>
           <Link href="aboutus">About us</Link>
+          <Link href="QADomainSelection">mock</Link>
         </nav>
       </SheetContent>
     </Sheet>
@@ -90,3 +91,4 @@ const Sidenav = () => {
 };
 
 export default Sidenav;
+
