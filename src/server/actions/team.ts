@@ -38,20 +38,18 @@ export const getTeam = async () => {
     const term =
       member.year.toString() + `-${nextyear % 100 ? nextyear % 100 : nextyear}`;
 
-    if (!acc[term]) {
-      acc[term] = {
-        year: member.year,
-        term,
-        current: member.year === CURRENT_YEAR,
-        pors: [],
-        members: {
-          it: [],
-          tech: [],
-          editorial: [],
-          design: [],
-        },
-      };
-    }
+    acc[term] ??= {
+      year: member.year,
+      term,
+      current: member.year === CURRENT_YEAR,
+      pors: [],
+      members: {
+        it: [],
+        tech: [],
+        editorial: [],
+        design: [],
+      },
+    };
     if (member.ispor) {
       acc[term].pors.push({
         uid: member.uid,
@@ -64,9 +62,7 @@ export const getTeam = async () => {
 
     if (member.team) {
       const team = member.team;
-      if (!acc[term].members[team]) {
-        acc[term].members[team] = [];
-      }
+      acc[term].members[team] ??= [];
       acc[term].members[team].push({
         uid: member.uid,
         student: member.name,
